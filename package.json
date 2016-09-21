@@ -1,0 +1,16 @@
+{
+  "name": "Juxta",
+  "version": "0.1.0",
+  "main": "index.js",
+  "description": "",
+  "license": "MIT",
+  "repository": {},
+  "dependencies": {
+    "codemirror": "^5.18.2",
+    "mysql": "^2.11.1",
+    "node-mysql": "^0.4.2"
+  },
+  "devDependencies": {
+    "electron": "^1.3.5"
+  }
+}
