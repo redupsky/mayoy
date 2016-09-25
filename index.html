@@ -71,8 +71,10 @@
 
           let mysql = require("mysql");
 
+          let connection;
+
           app.ports.connect.subscribe(params => {
-            let connection = mysql.createConnection(
+            connection = mysql.createConnection(
               {
                 host: params.hostAndPort[0],
                 port: params.hostAndPort[1],
@@ -83,18 +85,29 @@
 
             connection.connect(error => {
               if (error) {
-                app.ports.connectionFailed.send("Connection error: " + error);
+                app.ports.connectionFailed.send(error.message);
                 return;
               }
 
-              app.ports.connectionEstablished.send(params);
+              app.ports.connectionEstablished.send([params, connection.threadId]);
+            });
+          });
+
+          app.ports.close.subscribe(threadId => {
+            connection.end(error => {
+              if (error) {
+                app.ports.closeConnectionFailed.send([threadId, error.message]);
+                return;
+              }
+
+              app.ports.connectionClosed.send(threadId);
             });
           });
 
           app.ports.runCodemirror.subscribe(id => {
 
               let observer = new MutationObserver(mutations => {
-                mutations.forEach(function(mutation) {
+                mutations.forEach(mutation => {
                   if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "MAIN") {
 
                     observer.disconnect();
@@ -105,7 +118,7 @@
                       "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
                     });
 
-                    app.ports.requestTextFromCodemirror.subscribe(function () {
+                    app.ports.requestTextFromCodemirror.subscribe(() => {
                       app.ports.receiveTextFromCodemirror.send(editor.getValue());
                     });
                   }

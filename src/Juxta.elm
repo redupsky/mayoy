@@ -33,10 +33,19 @@ port requestTextFromCodemirror : String -> Cmd msg
 port connect : ConnectionParameters -> Cmd msg
 
 
-port connectionEstablished : (ConnectionParameters -> msg) -> Sub msg
+port connectionEstablished : (( ConnectionParameters, ThreadId ) -> msg) -> Sub msg
 
 
 port connectionFailed : (String -> msg) -> Sub msg
+
+
+port close : ThreadId -> Cmd msg
+
+
+port connectionClosed : (ThreadId -> msg) -> Sub msg
+
+
+port closeConnectionFailed : (( ThreadId, String ) -> msg) -> Sub msg
 
 
 port pressRunInCodemirror : (String -> msg) -> Sub msg
@@ -51,6 +60,8 @@ subscriptions model =
         , connectionFailed ConnectionFailed
         , pressRunInCodemirror (\_ -> TryToRun)
         , receiveTextFromCodemirror ReceiveTextAndRun
+        , connectionClosed ConnectionClosed
+        , closeConnectionFailed CloseConnectionFailed
         ]
 
 
@@ -115,7 +126,10 @@ init =
 type Message
     = Connect ConnectionParameters
     | ConnectionFailed String
-    | ConnectionEstablished ConnectionParameters
+    | ConnectionEstablished ( ConnectionParameters, ThreadId )
+    | CloseConnection ThreadId
+    | CloseConnectionFailed ( ThreadId, String )
+    | ConnectionClosed ThreadId
     | TryToRun
     | ReceiveTextAndRun String
     | RunCommand
@@ -129,8 +143,17 @@ update msg model =
         ConnectionFailed error ->
             ( { model | errors = [ error ], connection = Failed ( error, 0 ) }, Cmd.none )
 
-        ConnectionEstablished connection ->
-            ( { model | connection = Established ( connection, 0 ) }, runCodemirror textAreaId )
+        ConnectionEstablished ( connection, threadId ) ->
+            ( { model | connection = Established ( connection, threadId ) }, runCodemirror textAreaId )
+
+        CloseConnection threadId ->
+            ( model, close threadId )
+
+        CloseConnectionFailed ( threadId, error ) ->
+            ( { model | connection = NoConnection, errors = [ error ] }, Cmd.none )
+
+        ConnectionClosed threadId ->
+            ( { model | connection = NoConnection }, Cmd.none )
 
         ReceiveTextAndRun text ->
             update RunCommand { model | text = text }
@@ -201,12 +224,23 @@ viewHeader model =
 
                 _ ->
                     ""
+
+        connectionThreadId =
+            case model.connection of
+                Established ( _, threadId ) ->
+                    threadId
+
+                _ ->
+                    0
     in
         header [ class "header" ]
             [ div [ class "header-left" ]
                 [ select []
                     [ option [] [ text connectionName ]
                     ]
+                ]
+            , div [ class "" ]
+                [ button [ class "close-button", onClick <| CloseConnection <| connectionThreadId ] [ text "Close" ]
                 ]
             , div [ class "header-right" ]
                 [ button [ class "query-run-button", onClick TryToRun ] [ text "Run" ]
