@@ -24,12 +24,6 @@ main =
 -- Subscriptions
 
 
-port runCodemirror : String -> Cmd msg
-
-
-port requestTextFromCodemirror : String -> Cmd msg
-
-
 port connect : ConnectionParameters -> Cmd msg
 
 
@@ -48,10 +42,34 @@ port connectionClosed : (ThreadId -> msg) -> Sub msg
 port closeConnectionFailed : (( ThreadId, String ) -> msg) -> Sub msg
 
 
-port pressRunInCodemirror : (String -> msg) -> Sub msg
+port runCodemirror : String -> Cmd msg
+
+
+port requestTextFromCodemirror : String -> Cmd msg
 
 
 port receiveTextFromCodemirror : (String -> msg) -> Sub msg
+
+
+port runQuery : ( ThreadId, String ) -> Cmd msg
+
+
+port queryFailed : (( ThreadId, String ) -> msg) -> Sub msg
+
+
+port receiveColumns : (( ThreadId, List Column ) -> msg) -> Sub msg
+
+
+port receiveRow : (( ThreadId, Row ) -> msg) -> Sub msg
+
+
+port receiveResult : (( ThreadId, Result ) -> msg) -> Sub msg
+
+
+port receiveEnd : (ThreadId -> msg) -> Sub msg
+
+
+port pressRunInCodemirror : (String -> msg) -> Sub msg
 
 
 subscriptions model =
@@ -62,6 +80,11 @@ subscriptions model =
         , receiveTextFromCodemirror ReceiveTextAndRun
         , connectionClosed ConnectionClosed
         , closeConnectionFailed CloseConnectionFailed
+        , queryFailed QueryFailed
+        , receiveColumns ReceiveColumns
+        , receiveRow ReceiveRow
+        , receiveResult ReceiveResult
+        , receiveEnd ReceiveEnd
         ]
 
 
@@ -93,28 +116,47 @@ type Connection
 
 
 localhost =
-    ConnectionParameters ( "localhost", 3306 ) "root" "" Nothing
+    ConnectionParameters ( "localhost", 3306 ) "root" "mysql" Nothing
 
 
 type alias Model =
     { errors : List String
     , connection : Connection
     , text : String
-    , results : List Query
+    , result : Maybe QueryResult
     , status : String
     }
 
 
 type alias Query =
-    ( String, Maybe Result )
+    String
 
 
-type Result
-    = List String
+type QueryResult
+    = Rows ( List Column, List Row )
+    | Ok Result
+
+
+type alias Result =
+    { affectedRows : String
+    , changedRows : Int
+    , insertId : Int
+    , message : String
+    }
+
+
+type alias Column =
+    { name : String
+    , typeNum : Int
+    }
+
+
+type alias Row =
+    List ( String, String )
 
 
 init =
-    ( Model [] NoConnection "select * from mysql.tables where name like '%mysql%'" [] ""
+    ( Model [] NoConnection "select * from `tables` where name like '%mysql%';" Nothing ""
     , Cmd.none
     )
 
@@ -132,7 +174,12 @@ type Message
     | ConnectionClosed ThreadId
     | TryToRun
     | ReceiveTextAndRun String
-    | RunCommand
+    | RunQuery
+    | QueryFailed ( ThreadId, String )
+    | ReceiveColumns ( ThreadId, List Column )
+    | ReceiveRow ( ThreadId, Row )
+    | ReceiveResult ( ThreadId, Result )
+    | ReceiveEnd ThreadId
 
 
 update msg model =
@@ -155,14 +202,41 @@ update msg model =
         ConnectionClosed threadId ->
             ( { model | connection = NoConnection }, Cmd.none )
 
-        ReceiveTextAndRun text ->
-            update RunCommand { model | text = text }
-
-        RunCommand ->
-            ( { model | status = "Run: " ++ model.text }, Cmd.none )
-
         TryToRun ->
             ( model, requestTextFromCodemirror "" )
+
+        ReceiveTextAndRun text ->
+            update RunQuery { model | text = text }
+
+        RunQuery ->
+            ( { model | status = "Run: " ++ model.text }
+            , case model.connection of
+                Established ( _, threadId ) ->
+                    runQuery ( threadId, model.text )
+
+                _ ->
+                    Cmd.none
+            )
+
+        QueryFailed ( _, error ) ->
+            ( { model | errors = [ error ] }, Cmd.none )
+
+        ReceiveColumns ( _, columns ) ->
+            ( { model | result = Just <| Rows ( columns, [] ) }, Cmd.none )
+
+        ReceiveRow ( _, row ) ->
+            case model.result of
+                Just (Rows ( columns, rows )) ->
+                    ( { model | result = Just (Rows ( columns, rows ++ [ row ] )) }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ReceiveResult _ ->
+            ( model, Cmd.none )
+
+        ReceiveEnd _ ->
+            ( model, Cmd.none )
 
 
 
@@ -199,7 +273,7 @@ viewWorkspace model =
         [ viewErrors model.errors
         , viewHeader model
         , viewQuery model.text
-        , viewResultTable model.results
+        , viewResultTable model.result
         , viewStatus model.status
         ]
 
@@ -254,24 +328,40 @@ viewQuery queries =
         ]
 
 
-viewResultTable results =
-    if List.length results > 0 then
-        table [ class "results-table" ]
-            [ tbody []
-                [ tr []
-                    [ td []
-                        [ text "Qq"
-                        ]
-                    , td []
-                        [ text "zZ.."
-                        ]
+viewResultTable result =
+    let
+        head columns =
+            case columns of
+                [] ->
+                    []
+
+                columns ->
+                    [ thead [] (List.map (\c -> td [] [ text c.name ]) columns) ]
+
+        body rows =
+            case rows of
+                [] ->
+                    []
+
+                rows ->
+                    [ tbody []
+                        (List.map (\row -> tr [] (List.map (\( _, value ) -> td [] [ text value ]) row)) rows)
                     ]
-                ]
-            ]
-    else
-        div []
-            [ text "Not results yet"
-            ]
+
+        columnsAndRows columns rows =
+            table [ class "results-table" ]
+                ((head columns)
+                    ++ (body rows)
+                )
+    in
+        case result of
+            Just (Rows ( columns, rows )) ->
+                columnsAndRows columns rows
+
+            _ ->
+                div []
+                    [ text "Not results yet"
+                    ]
 
 
 viewStatus status =

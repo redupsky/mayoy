@@ -71,6 +71,8 @@
 
           let mysql = require("mysql");
 
+          let packets = require("mysql/lib/protocol/packets");
+
           let connection;
 
           app.ports.connect.subscribe(params => {
@@ -79,7 +81,8 @@
                 host: params.hostAndPort[0],
                 port: params.hostAndPort[1],
                 user: params.user,
-                password: params.password
+                password: params.password,
+                database: params.database
               }
             );
 
@@ -102,6 +105,40 @@
 
               app.ports.connectionClosed.send(threadId);
             });
+          });
+
+          app.ports.runQuery.subscribe(([threadId, sql]) => {
+            let query = connection.query(sql);
+
+            query.on("error", error => app.ports.queryFailed.send([threadId, error.message]));
+
+            query.on(
+              "fields",
+              fields => app.ports.receiveColumns.send(
+                [
+                  threadId,
+                  fields.map(field => new Object({name: field.name, typeNum: field.type, length: field.length}))
+                ]
+              )
+            );
+
+            query.on("result", packet => {
+              if (packet instanceof packets.RowDataPacket) {
+
+                let columns = Object.getOwnPropertyNames(packet);
+
+                let row = [];
+
+                for (let column of columns) {
+                  let value = packet[column];
+                  row.push([column, value !== null && value !== undefined ? String(value) : ""]);
+                }
+
+                app.ports.receiveRow.send([threadId, row]);
+              }
+            });
+
+            query.on("end", () => app.ports.receiveEnd.send(threadId));
           });
 
           app.ports.runCodemirror.subscribe(id => {
