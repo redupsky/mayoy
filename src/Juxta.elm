@@ -116,7 +116,7 @@ type Connection
 
 
 localhost =
-    ConnectionParameters ( "localhost", 3306 ) "root" "mysql" Nothing
+    ConnectionParameters ( "localhost", 3306 ) "root" "" Nothing
 
 
 type alias Model =
@@ -210,7 +210,7 @@ update msg model =
             update RunQuery { model | text = text }
 
         RunQuery ->
-            ( { model | status = "Run: " ++ model.text }
+            ( model
             , case model.connection of
                 Established ( _, threadId ) ->
                     runQuery ( threadId, model.text )
@@ -237,7 +237,29 @@ update msg model =
             ( { model | result = Just <| Ok <| result }, Cmd.none )
 
         ReceiveEnd _ ->
-            ( model, Cmd.none )
+            let
+                status result =
+                    case result of
+                        Just (Ok result) ->
+                            "Query OK, " ++ toString result.affectedRows ++ " rows affected, " ++ toString result.warningCount ++ " warning"
+
+                        Just (Rows ( _, [] )) ->
+                            "Empty set"
+
+                        Just (Rows ( _, [ _ ] )) ->
+                            "1 row in set"
+
+                        Just (Rows ( _, rows )) ->
+                            let
+                                length =
+                                    List.length rows
+                            in
+                                toString length ++ " rows" ++ " in set"
+
+                        _ ->
+                            ""
+            in
+                ( { model | status = status model.result }, Cmd.none )
 
 
 
