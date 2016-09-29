@@ -135,6 +135,9 @@
                 }
 
                 app.ports.receiveRow.send([threadId, row]);
+
+              } else if (packet instanceof packets.OkPacket) {
+                app.ports.receiveResult.send([threadId, packet]);
               }
             });
 

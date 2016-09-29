@@ -138,10 +138,11 @@ type QueryResult
 
 
 type alias Result =
-    { affectedRows : String
+    { affectedRows : Int
     , changedRows : Int
     , insertId : Int
     , message : String
+    , warningCount : Int
     }
 
 
@@ -232,8 +233,8 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ReceiveResult _ ->
-            ( model, Cmd.none )
+        ReceiveResult ( _, result ) ->
+            ( { model | result = Just <| Ok <| result }, Cmd.none )
 
         ReceiveEnd _ ->
             ( model, Cmd.none )
