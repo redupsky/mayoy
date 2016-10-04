@@ -1,174 +1,262 @@
 <!DOCTYPE HTML>
-<html>
-    <head>
-        <meta charset="UTF-8"/>
-        <title>Run query...</title>
-        <style>
-            html,head,body { padding:0; margin:0; }
-            body {
-                font-family: calibri, helvetica, arial, sans-serif;
-                padding: 14px;
-            }
+<meta charset="UTF-8"/>
+<title>Run query...</title>
+<style>
 
-            .header {
-              height: 35px;
-            }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
 
-            .header-left {
-              float: left;
-              min-width: 200px;
-            }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333333;
+  }
 
-            .header-right {
-              float: left;
-              margin-left: 25px;
-            }
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+  }
 
-            .query {
-              clear: both;
-            }
+  .header {
+    width: 100%;
+    background-color: #fdfdfd;
+  }
 
-            .query .CodeMirror {
-              width: 100%;
-              height: 106px;
-            }
+  .header-menu {
+    float: left;
+    margin: 0 14px;
+  }
 
-            .query-text {
-                display: block;
-                margin-bottom: 7px;
-                width: 355px;
-                height: 100px;
-                font-family: monospace;
-                font-size: 13px;
-                //visibility: hidden;
-            }
+  .header-menu-item {
+    float: left;
+    height: 42px;
+    line-height: 42px;
+  }
 
-            .results-table {
-                margin-top: 20px;
-            }
+  .header-menu-item.close {
+    margin-left: 21px;
+  }
 
-          .status {
-            background-color: #eee;
-            color: #888;
-            font-size: 13px;
-            line-height: 21px;
-            padding: 0 7px;
-            border-radius: 3px;
-            display: inline-block;
+  .header-buttons {
+    height: 42px;
+    float: right;
+    margin: 0 14px;
+    line-height: 42px;
+  }
+
+  .editor {
+    clear: left;
+    border-top: gainsboro 1px solid;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 100px;
+    overflow:hidden;
+  }
+
+  .editor .CodeMirror {
+    width: 100%;
+    height: 100%;
+  }
+
+  textarea {
+  }
+
+  .grid-container {
+    display: block;
+    width: 100%;
+    flex-grow: 3;
+    flex-shrink: 3;
+    flex-basis: 200px;
+    overflow: scroll;
+  }
+
+  .grid {
+    border-collapse: collapse;
+    line-height: 24px;
+    width: 100%;
+    color: #333;
+    white-space: nowrap;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+
+  .grid thead {
+      //position: fixed;
+      background-color: #fdfdfd;
+      left: 0;
+      right: 0;
+  }
+
+  .grid th {
+    font-size: 12px;
+    text-align: left;
+    border-right: #eee 1px dotted;
+    border-bottom: #ccc 1px solid;
+    padding: 0 11px;
+    width: 125px;
+  }
+
+  .grid th:last-child {
+    border-right-width: 0px;
+    width: auto;
+  }
+
+  .grid tbody td {
+    font-size: 12px;
+    border-right: #eee 1px dotted;
+    border-bottom: #eee 1px solid;
+    padding: 0 11px;
+    width: 125px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .grid tbody td:last-child {
+    border-right-width: 0px;
+    width: auto;
+  }
+
+  .grid tbody tr:last-child td {
+    border-bottom-width: 0px;
+  }
+
+  .status-bar {
+    background-color: #fcfcfc;
+    height: 0px;
+    line-height: 26px;
+    height: 26px;
+    font-size: 11px;
+    padding: 0 14px;
+    color: #666;
+    font-family: 'Lucida Grande', 'Segoe UI', Ubuntu, Cantarell, sans-serif;
+  }
+
+  .status-bar-left {
+    float: left;
+  }
+
+  .status-bar-right {
+    float: right;
+  }
+
+</style>
+<script src="node_modules/codemirror/lib/codemirror.js" type="text/javascript"></script>
+<script src="node_modules/codemirror/mode/sql/sql.js" type="text/javascript"></script>
+<link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css"/>
+<body>
+  <script type="text/javascript">
+
+    let Elm = require("./juxta");
+
+    let app = Elm.Juxta.fullscreen();
+
+    let mysql = require("mysql");
+
+    let packets = require("mysql/lib/protocol/packets");
+
+    let connection;
+
+    app.ports.connect.subscribe(params => {
+      connection = mysql.createConnection(
+        {
+          host: params.hostAndPort[0],
+          port: params.hostAndPort[1],
+          user: params.user,
+          password: params.password,
+          database: params.database
+        }
+      );
+
+      connection.connect(error => {
+        if (error) {
+          app.ports.connectionFailed.send(error.message);
+          return;
+        }
+
+        app.ports.connectionEstablished.send([params, connection.threadId]);
+      });
+    });
+
+    app.ports.close.subscribe(threadId => {
+      connection.end(error => {
+        if (error) {
+          app.ports.closeConnectionFailed.send([threadId, error.message]);
+          return;
+        }
+
+        app.ports.connectionClosed.send(threadId);
+      });
+    });
+
+    app.ports.runQuery.subscribe(([threadId, sql]) => {
+      let query = connection.query(sql);
+
+      query.on("error", error => app.ports.queryFailed.send([threadId, error.message]));
+
+      query.on(
+        "fields",
+        fields => app.ports.receiveColumns.send(
+          [
+            threadId,
+            fields.map(field => new Object({name: field.name, typeNum: field.type, length: field.length}))
+          ]
+        )
+      );
+
+      query.on("result", packet => {
+        if (packet instanceof packets.RowDataPacket) {
+
+          let columns = Object.getOwnPropertyNames(packet);
+
+          let row = [];
+
+          for (let column of columns) {
+            let value = packet[column];
+            row.push([column, value !== null && value !== undefined ? String(value) : ""]);
           }
 
-        </style>
-        <script src="node_modules/codemirror/lib/codemirror.js" type="text/javascript"></script>
-        <script src="node_modules/codemirror/mode/sql/sql.js" type="text/javascript"></script>
-        <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css"/>
-    </head>
-    <body>
-        <script type="text/javascript">
+          app.ports.receiveRow.send([threadId, row]);
 
-          let Elm = require("./juxta");
+        } else if (packet instanceof packets.OkPacket) {
+          app.ports.receiveResult.send([threadId, packet]);
+        }
+      });
 
-          let app = Elm.Juxta.fullscreen();
+      query.on("end", () => app.ports.receiveEnd.send(threadId));
+    });
 
-          let mysql = require("mysql");
+    app.ports.runCodemirror.subscribe(id => {
 
-          let packets = require("mysql/lib/protocol/packets");
+      let observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].className === "editor") {
 
-          let connection;
+            observer.disconnect();
 
-          app.ports.connect.subscribe(params => {
-            connection = mysql.createConnection(
-              {
-                host: params.hostAndPort[0],
-                port: params.hostAndPort[1],
-                user: params.user,
-                password: params.password,
-                database: params.database
-              }
-            );
+            let editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql"});
 
-            connection.connect(error => {
-              if (error) {
-                app.ports.connectionFailed.send(error.message);
-                return;
-              }
-
-              app.ports.connectionEstablished.send([params, connection.threadId]);
-            });
-          });
-
-          app.ports.close.subscribe(threadId => {
-            connection.end(error => {
-              if (error) {
-                app.ports.closeConnectionFailed.send([threadId, error.message]);
-                return;
-              }
-
-              app.ports.connectionClosed.send(threadId);
-            });
-          });
-
-          app.ports.runQuery.subscribe(([threadId, sql]) => {
-            let query = connection.query(sql);
-
-            query.on("error", error => app.ports.queryFailed.send([threadId, error.message]));
-
-            query.on(
-              "fields",
-              fields => app.ports.receiveColumns.send(
-                [
-                  threadId,
-                  fields.map(field => new Object({name: field.name, typeNum: field.type, length: field.length}))
-                ]
-              )
-            );
-
-            query.on("result", packet => {
-              if (packet instanceof packets.RowDataPacket) {
-
-                let columns = Object.getOwnPropertyNames(packet);
-
-                let row = [];
-
-                for (let column of columns) {
-                  let value = packet[column];
-                  row.push([column, value !== null && value !== undefined ? String(value) : ""]);
-                }
-
-                app.ports.receiveRow.send([threadId, row]);
-
-              } else if (packet instanceof packets.OkPacket) {
-                app.ports.receiveResult.send([threadId, packet]);
-              }
+            editor.setOption("extraKeys", {
+              "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
             });
 
-            query.on("end", () => app.ports.receiveEnd.send(threadId));
-          });
-
-          app.ports.runCodemirror.subscribe(id => {
-
-              let observer = new MutationObserver(mutations => {
-                mutations.forEach(mutation => {
-                  if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "MAIN") {
-
-                    observer.disconnect();
-
-                    let editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql"});
-
-                    editor.setOption("extraKeys", {
-                      "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
-                    });
-
-                    app.ports.requestTextFromCodemirror.subscribe(() => {
-                      app.ports.receiveTextFromCodemirror.send(editor.getValue());
-                    });
-                  }
-                });
-              });
-
-              observer.observe(document.body, {childList: true, characterData: true, subtree: true});
+            app.ports.requestTextFromCodemirror.subscribe(() => {
+              app.ports.receiveTextFromCodemirror.send(editor.getValue());
             });
+          }
+        });
+      });
 
+      observer.observe(document.body, {childList: true, characterData: true, subtree: true});
+    });
 
-        </script>
-    </body>
-</html>
+  </script>
+</body>

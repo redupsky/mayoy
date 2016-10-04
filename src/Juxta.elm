@@ -1,6 +1,6 @@
 port module Juxta exposing (..)
 
-import Html exposing (text, div, span, textarea, button, table, tr, td, tbody, thead, select, option, header, main')
+import Html exposing (text, div, span, textarea, button, table, th, tr, td, tbody, thead, select, option, header)
 import Html.Attributes exposing (style, class, id, disabled)
 import Html.Events exposing (onInput, onClick, on, keyCode)
 import Html.App as App
@@ -292,7 +292,7 @@ viewLogin model =
 
 
 viewWorkspace model =
-    main' []
+    div [ class "workspace" ]
         [ viewErrors model.errors
         , viewHeader model
         , viewQuery model.text
@@ -331,23 +331,26 @@ viewHeader model =
                     0
     in
         header [ class "header" ]
-            [ div [ class "header-left" ]
-                [ select []
-                    [ option [] [ text connectionName ]
+            [ div [ class "header-menu" ]
+                [ div [ class "header-menu-item select-connection" ]
+                    [ select []
+                        [ option [] [ text connectionName ]
+                        ]
                     ]
+                , div [ class "header-menu-item close" ]
+                    [ button [ class "close-button", onClick <| CloseConnection <| connectionThreadId ] [ text "Close" ] ]
                 ]
-            , div [ class "" ]
-                [ button [ class "close-button", onClick <| CloseConnection <| connectionThreadId ] [ text "Close" ]
-                ]
-            , div [ class "header-right" ]
-                [ button [ class "query-run-button", onClick TryToRun ] [ text "Run" ]
+            , div [ class "header-buttons" ]
+                [ div []
+                    [ button [ onClick TryToRun ] [ text "Run" ]
+                    ]
                 ]
             ]
 
 
 viewQuery queries =
-    div [ class "query" ]
-        [ textarea [ class "query-text", id textAreaId ] [ text queries ]
+    div [ class "editor" ]
+        [ textarea [ id textAreaId ] [ text queries ]
         ]
 
 
@@ -359,7 +362,7 @@ viewResultTable result =
                     []
 
                 columns ->
-                    [ thead [] (List.map (\c -> td [] [ text c.name ]) columns) ]
+                    [ thead [] (List.map (\c -> th [] [ text c.name ]) columns) ]
 
         body rows =
             case rows of
@@ -372,22 +375,25 @@ viewResultTable result =
                     ]
 
         columnsAndRows columns rows =
-            table [ class "results-table" ]
+            table [ class "grid visible" ]
                 ((head columns)
                     ++ (body rows)
                 )
     in
         case result of
             Just (Rows ( columns, rows )) ->
-                columnsAndRows columns rows
+                div [ class "grid-container" ]
+                    [ columnsAndRows columns rows
+                    ]
 
             _ ->
-                div []
-                    [ text "Not results yet"
-                    ]
+                text ""
 
 
 viewStatus status =
-    div [ class "status" ]
-        [ text status
+    div [ class "status-bar" ]
+        [ div [ class "status-bar-left" ]
+            [ text status
+            ]
+        , div [ class "status-bar-right" ] [ text "UTF-8" ]
         ]
