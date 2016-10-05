@@ -195,7 +195,7 @@ update msg model =
             ( { model | connection = Established ( connection, threadId ) }, runCodemirror textAreaId )
 
         CloseConnection threadId ->
-            ( model, close threadId )
+            ( { model | errors = [] }, close threadId )
 
         CloseConnectionFailed ( threadId, error ) ->
             ( { model | connection = NoConnection, errors = [ error ] }, Cmd.none )
