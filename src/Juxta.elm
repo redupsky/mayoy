@@ -133,8 +133,9 @@ type alias Query =
 
 
 type QueryResult
-    = Rows ( List Column, List Row )
-    | Ok Result
+    = Ok Result
+    | Rows ( List Column, List Row )
+    | QueryFails String
 
 
 type alias Result =
@@ -210,7 +211,7 @@ update msg model =
             update RunQuery { model | text = text }
 
         RunQuery ->
-            ( { model | status = "" }
+            ( { model | errors = [], status = "" }
             , case model.connection of
                 Established ( _, threadId ) ->
                     runQuery ( threadId, model.text )
@@ -220,7 +221,7 @@ update msg model =
             )
 
         QueryFailed ( _, error ) ->
-            ( { model | errors = [ error ] }, Cmd.none )
+            ( { model | errors = [ error ], result = Just <| QueryFails <| error }, Cmd.none )
 
         ReceiveColumns ( _, columns ) ->
             ( { model | result = Just <| Rows ( columns, [] ) }, Cmd.none )
@@ -255,6 +256,9 @@ update msg model =
                                     List.length rows
                             in
                                 toString length ++ " rows" ++ " in set"
+
+                        Just (QueryFails _) ->
+                            "Errors"
 
                         _ ->
                             ""
