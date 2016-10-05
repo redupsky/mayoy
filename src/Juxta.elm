@@ -186,7 +186,7 @@ type Message
 update msg model =
     case msg of
         Connect connection ->
-            ( { model | errors = [], connection = Connecting connection }, connect connection )
+            ( { model | errors = [], connection = Connecting connection, status = "" }, connect connection )
 
         ConnectionFailed error ->
             ( { model | errors = [ error ], connection = Failed ( error, 0 ) }, Cmd.none )
@@ -210,7 +210,7 @@ update msg model =
             update RunQuery { model | text = text }
 
         RunQuery ->
-            ( model
+            ( { model | status = "" }
             , case model.connection of
                 Established ( _, threadId ) ->
                     runQuery ( threadId, model.text )
