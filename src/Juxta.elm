@@ -113,6 +113,42 @@ type Connection
     | Connecting ConnectionParameters
     | Failed ConnectionError
     | Established ( ConnectionParameters, ThreadId )
+    | Closing ( ConnectionParameters, ThreadId )
+
+
+extractParamsAndThreadId connection =
+    case connection of
+        Established ( params, threadId ) ->
+            Just ( params, threadId )
+
+        Closing ( params, threadId ) ->
+            Just ( params, threadId )
+
+        _ ->
+            Nothing
+
+
+connectionName params =
+    let
+        user =
+            params.user
+
+        host =
+            fst params.hostAndPort
+
+        portNumber =
+            snd params.hostAndPort
+    in
+        user ++ "@" ++ host ++ ":" ++ (toString portNumber)
+
+
+establishedToClosing connection =
+    case connection of
+        Established connection ->
+            Closing connection
+
+        _ ->
+            NoConnection
 
 
 localhost =
@@ -196,7 +232,7 @@ update msg model =
             ( { model | connection = Established ( connection, threadId ) }, runCodemirror textAreaId )
 
         CloseConnection threadId ->
-            ( { model | errors = [] }, close threadId )
+            ( { model | connection = establishedToClosing model.connection, errors = [] }, close threadId )
 
         CloseConnectionFailed ( threadId, error ) ->
             ( { model | connection = NoConnection, errors = [ error ] }, Cmd.none )
@@ -275,6 +311,9 @@ view model =
         Established _ ->
             viewWorkspace model
 
+        Closing _ ->
+            viewWorkspace model
+
         _ ->
             viewLogin model
 
@@ -311,43 +350,56 @@ viewErrors errors =
 
 viewHeader model =
     let
-        connectionName =
-            case model.connection of
-                Established ( { user, hostAndPort }, _ ) ->
-                    let
-                        host =
-                            fst hostAndPort
+        connection =
+            extractParamsAndThreadId model.connection
 
-                        portNumber =
-                            snd hostAndPort
-                    in
-                        user ++ "@" ++ host ++ ":" ++ (toString portNumber)
+        closing =
+            case model.connection of
+                Closing _ ->
+                    True
+
+                _ ->
+                    False
+
+        name =
+            case connection of
+                Just ( params, _ ) ->
+                    connectionName params
 
                 _ ->
                     ""
 
-        connectionThreadId =
-            case model.connection of
-                Established ( _, threadId ) ->
+        threadId =
+            case connection of
+                Just ( _, threadId ) ->
                     threadId
 
                 _ ->
                     0
+
+        selectConnection =
+            div [ class "header-menu-item select-connection" ]
+                [ select []
+                    [ option [] [ text name ]
+                    ]
+                ]
+
+        closeConnection =
+            div [ class "header-menu-item close" ]
+                [ button [ class "close-button", disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ] ]
+
+        run =
+            div []
+                [ button [ disabled closing, onClick TryToRun ] [ text "Run" ]
+                ]
     in
         header [ class "header" ]
             [ div [ class "header-menu" ]
-                [ div [ class "header-menu-item select-connection" ]
-                    [ select []
-                        [ option [] [ text connectionName ]
-                        ]
-                    ]
-                , div [ class "header-menu-item close" ]
-                    [ button [ class "close-button", onClick <| CloseConnection <| connectionThreadId ] [ text "Close" ] ]
+                [ selectConnection
+                , closeConnection
                 ]
             , div [ class "header-buttons" ]
-                [ div []
-                    [ button [ onClick TryToRun ] [ text "Run" ]
-                    ]
+                [ run
                 ]
             ]
 
