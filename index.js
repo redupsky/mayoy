@@ -23,7 +23,7 @@ const menu = Menu.buildFromTemplate(
 
 function createWindow() {
 
-  win = new BrowserWindow({width: 800, height: 600});
+  win = new BrowserWindow({width: 800, height: 600, minWidth: 600, minHeight: 450});
 
   Menu.setApplicationMenu(menu);
 
