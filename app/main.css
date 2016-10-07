@@ -1,0 +1,144 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333333;
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.header {
+  width: 100%;
+  background-color: #fdfdfd;
+}
+
+.header-menu {
+  float: left;
+  margin: 0 14px;
+}
+
+.header-menu-item {
+  float: left;
+  height: 42px;
+  line-height: 42px;
+}
+
+.header-menu-item.close {
+  margin-left: 21px;
+}
+
+.header-buttons {
+  height: 42px;
+  float: right;
+  margin: 0 14px;
+  line-height: 42px;
+}
+
+.editor {
+  clear: left;
+  border-top: gainsboro 1px solid;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 100px;
+  overflow:hidden;
+}
+
+.editor .CodeMirror {
+  width: 100%;
+  height: 100%;
+}
+
+textarea {
+}
+
+.grid-container {
+  display: block;
+  width: 100%;
+  flex-grow: 3;
+  flex-shrink: 3;
+  flex-basis: 200px;
+  overflow: scroll;
+}
+
+.grid {
+  border-collapse: collapse;
+  line-height: 24px;
+  width: 100%;
+  color: #333;
+  white-space: nowrap;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.grid thead {
+  //position: fixed;
+  background-color: #fdfdfd;
+  left: 0;
+  right: 0;
+}
+
+.grid th {
+  font-size: 12px;
+  text-align: left;
+  border-right: #eee 1px dotted;
+  border-bottom: #ccc 1px solid;
+  padding: 0 11px;
+  width: 125px;
+}
+
+.grid th:last-child {
+  border-right-width: 0px;
+  width: auto;
+}
+
+.grid tbody td {
+  font-size: 12px;
+  border-right: #eee 1px dotted;
+  border-bottom: #eee 1px solid;
+  padding: 0 11px;
+  width: 125px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid tbody td:last-child {
+  border-right-width: 0px;
+  width: auto;
+}
+
+.grid tbody tr:last-child td {
+  border-bottom-width: 0px;
+}
+
+.status-bar {
+  background-color: #fcfcfc;
+  height: 0px;
+  line-height: 26px;
+  height: 26px;
+  font-size: 11px;
+  padding: 0 14px;
+  color: #666;
+  font-family: 'Lucida Grande', 'Segoe UI', Ubuntu, Cantarell, sans-serif;
+}
+
+.status-bar-left {
+  float: left;
+}
+
+.status-bar-right {
+  float: right;
+}
