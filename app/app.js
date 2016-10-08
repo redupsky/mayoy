@@ -17,6 +17,22 @@ const menu = Menu.buildFromTemplate(
           role: "quit"
         }
       ]
+    },
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "Keyboard Shortcuts"
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: 'Developer Tools',
+          accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          click: (item, focusedWindow) => focusedWindow && focusedWindow.webContents.toggleDevTools()
+        }
+      ]
     }
   ]
 );
@@ -28,8 +44,6 @@ function createWindow() {
   Menu.setApplicationMenu(menu);
 
   win.loadURL(`file://${__dirname}/index.html`);
-
-  win.webContents.openDevTools();
 
   win.on("closed", () => {
     win = null;
