@@ -235,10 +235,10 @@ update msg model =
             ( { model | connection = establishedToClosing model.connection, errors = [] }, close threadId )
 
         CloseConnectionFailed ( threadId, error ) ->
-            ( { model | connection = NoConnection, errors = [ error ] }, Cmd.none )
+            ( { model | errors = [ error ], connection = NoConnection, text = "", result = Nothing, status = "" }, Cmd.none )
 
         ConnectionClosed threadId ->
-            ( { model | connection = NoConnection }, Cmd.none )
+            ( { model | errors = [], connection = NoConnection, text = "", result = Nothing, status = "" }, Cmd.none )
 
         TryToRun ->
             ( model, requestTextFromCodemirror "" )
