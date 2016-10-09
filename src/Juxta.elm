@@ -66,7 +66,7 @@ port receiveRow : (( ThreadId, Row ) -> msg) -> Sub msg
 port receiveResult : (( ThreadId, Result ) -> msg) -> Sub msg
 
 
-port receiveEnd : (ThreadId -> msg) -> Sub msg
+port receiveEnd : (( ThreadId, Float ) -> msg) -> Sub msg
 
 
 port pressRunInCodemirror : (String -> msg) -> Sub msg
@@ -217,7 +217,7 @@ type Message
     | ReceiveColumns ( ThreadId, List Column )
     | ReceiveRow ( ThreadId, Row )
     | ReceiveResult ( ThreadId, Result )
-    | ReceiveEnd ThreadId
+    | ReceiveEnd ( ThreadId, Float )
 
 
 update msg model =
@@ -273,10 +273,10 @@ update msg model =
         ReceiveResult ( _, result ) ->
             ( { model | result = Just <| Ok <| result }, Cmd.none )
 
-        ReceiveEnd _ ->
+        ReceiveEnd ( _, duration ) ->
             let
-                status result =
-                    case result of
+                result =
+                    case model.result of
                         Just (Ok result) ->
                             "Query OK, " ++ toString result.affectedRows ++ " rows affected, " ++ toString result.warningCount ++ " warning"
 
@@ -298,8 +298,11 @@ update msg model =
 
                         _ ->
                             ""
+
+                timing =
+                    "(" ++ toString duration ++ " sec)"
             in
-                ( { model | status = status model.result }, Cmd.none )
+                ( { model | status = result ++ " " ++ timing }, Cmd.none )
 
 
 

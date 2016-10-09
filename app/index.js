@@ -41,7 +41,9 @@ app.ports.close.subscribe(threadId => {
 });
 
 app.ports.runQuery.subscribe(([threadId, sql]) => {
+
   let query = connection.query(sql);
+  let start = new Date();
 
   query.on("error", error => app.ports.queryFailed.send([threadId, error.message]));
 
@@ -74,7 +76,10 @@ app.ports.runQuery.subscribe(([threadId, sql]) => {
     }
   });
 
-  query.on("end", () => app.ports.receiveEnd.send(threadId));
+  query.on("end", () => {
+    let stop = new Date();
+    app.ports.receiveEnd.send([threadId, (stop - start) / 1000]);
+  });
 });
 
 app.ports.runCodemirror.subscribe(id => {
