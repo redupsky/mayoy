@@ -333,7 +333,19 @@ viewLogin model =
     in
         div []
             [ viewErrors model.errors
-            , button [ onClick <| Connect <| localhost, disabled isConnecting ] [ text "Connect.." ]
+            , div [ class "connect-form" ]
+                [ button [ onClick <| Connect <| localhost, disabled isConnecting ] [ text "Connect.." ]
+                , div
+                    [ class <|
+                        "progress-indicator _small"
+                            ++ (if isConnecting then
+                                    " _visible"
+                                else
+                                    ""
+                               )
+                    ]
+                    []
+                ]
             ]
 
 
