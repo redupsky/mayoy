@@ -373,21 +373,21 @@ viewErrors errors =
     div [] (List.map text errors)
 
 
-viewHeader model =
+viewHeader { connection, result } =
     let
-        connection =
-            extractParamsAndThreadId model.connection
-
         closing =
-            case model.connection of
+            case connection of
                 Closing _ ->
                     True
 
                 _ ->
                     False
 
+        maybeConnectionAndThreadId =
+            extractParamsAndThreadId connection
+
         name =
-            case connection of
+            case maybeConnectionAndThreadId of
                 Just ( params, _ ) ->
                     connectionName params
 
@@ -395,7 +395,7 @@ viewHeader model =
                     ""
 
         threadId =
-            case connection of
+            case maybeConnectionAndThreadId of
                 Just ( _, threadId ) ->
                     threadId
 
@@ -417,7 +417,7 @@ viewHeader model =
             div
                 [ class <|
                     "progress-indicator _small"
-                        ++ (if (queryIsRunning model.result) then
+                        ++ (if (queryIsRunning result) then
                                 " _visible"
                             else
                                 ""
