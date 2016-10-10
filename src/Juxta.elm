@@ -169,9 +169,19 @@ type alias Query =
 
 
 type QueryResult
-    = Ok Result
+    = Running
+    | Ok Result
     | Rows ( List Column, List Row )
     | QueryFails String
+
+
+queryIsRunning result =
+    case result of
+        Just Running ->
+            True
+
+        _ ->
+            False
 
 
 type alias Result =
@@ -247,7 +257,7 @@ update msg model =
             update RunQuery { model | text = text }
 
         RunQuery ->
-            ( { model | errors = [], status = "" }
+            ( { model | errors = [], result = Just Running, status = "" }
             , case model.connection of
                 Established ( _, threadId ) ->
                     runQuery ( threadId, model.text )
@@ -403,10 +413,20 @@ viewHeader model =
             div [ class "header-menu-item close" ]
                 [ button [ class "close-button", disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ] ]
 
-        run =
-            div []
-                [ button [ disabled closing, onClick TryToRun ] [ text "Run" ]
+        runningIndicator =
+            div
+                [ class <|
+                    "progress-indicator _small"
+                        ++ (if (queryIsRunning model.result) then
+                                " _visible"
+                            else
+                                ""
+                           )
                 ]
+                []
+
+        run =
+            button [ disabled closing, onClick TryToRun ] [ text "Run" ]
     in
         header [ class "header" ]
             [ div [ class "header-menu" ]
@@ -414,7 +434,8 @@ viewHeader model =
                 , closeConnection
                 ]
             , div [ class "header-buttons" ]
-                [ run
+                [ div [ class "header-buttons-item _running-indicator" ] [ runningIndicator ]
+                , div [ class "header-buttons-item _run" ] [ run ]
                 ]
             ]
 

@@ -76,6 +76,25 @@ body {
   line-height: 42px;
 }
 
+.header-buttons-item {
+  float: left;
+}
+
+.header-buttons-item._running-indicator {
+  width: 24px;
+  margin-right: 11px;
+}
+
+.header-buttons-item._running-indicator .progress-indicator {
+  position: relative;
+  top: 11px;
+  visibility: hidden;
+}
+
+.header-buttons-item._running-indicator .progress-indicator._visible {
+  visibility: visible;
+}
+
 .editor {
   clear: left;
   border-top: gainsboro 1px solid;
