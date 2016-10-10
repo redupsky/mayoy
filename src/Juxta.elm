@@ -194,7 +194,7 @@ type alias Row =
 
 
 init =
-    ( Model [] NoConnection "select * from `tables` where name like '%mysql%';" Nothing ""
+    ( Model [] NoConnection "" Nothing ""
     , Cmd.none
     )
 
