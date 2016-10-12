@@ -434,8 +434,7 @@ viewHeader { connection, result } =
                 , closeConnection
                 ]
             , div [ class "header-buttons" ]
-                [ div [ class "header-buttons-item _running-indicator" ] [ runningIndicator ]
-                , div [ class "header-buttons-item _run" ] [ run ]
+                [ div [ class "header-buttons-item _run" ] [ runningIndicator, run ]
                 ]
             ]
 

@@ -80,18 +80,15 @@ body {
   float: left;
 }
 
-.header-buttons-item._running-indicator {
-  width: 24px;
+.header-buttons-item._run .progress-indicator {
+  display: inline-block;
+  position: relative;
+  top: 7px;
+  visibility: hidden;
   margin-right: 11px;
 }
 
-.header-buttons-item._running-indicator .progress-indicator {
-  position: relative;
-  top: 11px;
-  visibility: hidden;
-}
-
-.header-buttons-item._running-indicator .progress-indicator._visible {
+.header-buttons-item._run .progress-indicator._visible {
   visibility: visible;
 }
 
