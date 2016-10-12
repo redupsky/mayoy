@@ -69,6 +69,18 @@ body {
   margin-left: 21px;
 }
 
+.header-menu-item.close .progress-indicator {
+  display: inline-block;
+  position: relative;
+  top: 7px;
+  margin-left: 11px;
+  visibility: hidden;
+}
+
+.header-menu-item.close .progress-indicator._visible {
+  visibility: visible;
+}
+
 .header-buttons {
   height: 42px;
   float: right;

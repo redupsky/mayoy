@@ -411,7 +411,18 @@ viewHeader { connection, result } =
 
         closeConnection =
             div [ class "header-menu-item close" ]
-                [ button [ class "close-button", disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ] ]
+                [ button [ class "close-button", disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ]
+                , div
+                    [ class <|
+                        "progress-indicator _small"
+                            ++ (if closing then
+                                    " _visible"
+                                else
+                                    ""
+                               )
+                    ]
+                    []
+                ]
 
         runningIndicator =
             div
