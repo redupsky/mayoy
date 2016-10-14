@@ -437,7 +437,10 @@ viewHeader { connection, result } =
 
         closeConnection =
             div [ class "header-menu-item close" ]
-                [ buttonWithIndicator [ disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ] (rightOrNo closing)
+                [ buttonWithIndicator [ disabled <| closing || queryIsRunning result, onClick <| CloseConnection <| threadId ]
+                    [ text "Close"
+                    ]
+                    (rightOrNo closing)
                 ]
     in
         header [ class "header" ]
@@ -447,7 +450,7 @@ viewHeader { connection, result } =
                 ]
             , div [ class "header-buttons" ]
                 [ div [ class "header-buttons-item _run" ]
-                    [ buttonWithIndicator [ disabled closing, onClick TryToRun ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
+                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result, onClick TryToRun ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
                     ]
                 ]
             ]
