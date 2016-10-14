@@ -5,6 +5,7 @@ import Html.Attributes exposing (style, class, id, disabled)
 import Html.Events exposing (onInput, onClick, on, keyCode)
 import Html.App as App
 import Json.Decode
+import Time exposing (Time, second)
 
 
 textAreaId =
@@ -66,7 +67,7 @@ port receiveRow : (( ThreadId, Row ) -> msg) -> Sub msg
 port receiveResult : (( ThreadId, Result ) -> msg) -> Sub msg
 
 
-port receiveEnd : (( ThreadId, Float ) -> msg) -> Sub msg
+port receiveEnd : (( ThreadId, Time ) -> msg) -> Sub msg
 
 
 port pressRunInCodemirror : (String -> msg) -> Sub msg
@@ -85,6 +86,13 @@ subscriptions model =
         , receiveRow ReceiveRow
         , receiveResult ReceiveResult
         , receiveEnd ReceiveEnd
+        , (case model.result of
+            Just (Running passed) ->
+                Time.every second (\time -> CountQueryExecutionTime (passed + second))
+
+            _ ->
+                Sub.none
+          )
         ]
 
 
@@ -169,7 +177,7 @@ type alias Query =
 
 
 type QueryResult
-    = Running
+    = Running Time
     | Ok Result
     | Rows ( List Column, List Row )
     | QueryFails String
@@ -177,7 +185,7 @@ type QueryResult
 
 queryIsRunning result =
     case result of
-        Just Running ->
+        Just (Running _) ->
             True
 
         _ ->
@@ -227,7 +235,8 @@ type Message
     | ReceiveColumns ( ThreadId, List Column )
     | ReceiveRow ( ThreadId, Row )
     | ReceiveResult ( ThreadId, Result )
-    | ReceiveEnd ( ThreadId, Float )
+    | ReceiveEnd ( ThreadId, Time )
+    | CountQueryExecutionTime Time
 
 
 update msg model =
@@ -257,7 +266,7 @@ update msg model =
             update RunQuery { model | text = text }
 
         RunQuery ->
-            ( { model | errors = [], result = Just Running, status = "" }
+            ( { model | errors = [], result = Just <| Running 0, status = "" }
             , case model.connection of
                 Established ( _, threadId ) ->
                     runQuery ( threadId, model.text )
@@ -313,6 +322,18 @@ update msg model =
                     "(" ++ toString duration ++ " sec)"
             in
                 ( { model | status = result ++ " " ++ timing }, Cmd.none )
+
+        CountQueryExecutionTime time ->
+            ( { model
+                | result = Just <| Running time
+                , status =
+                    if time >= second then
+                        "Waiting…"
+                    else
+                        ""
+              }
+            , Cmd.none
+            )
 
 
 
