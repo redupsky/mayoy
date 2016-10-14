@@ -8,6 +8,8 @@ let packets = require("mysql/lib/protocol/packets");
 
 let connection;
 
+let editor;
+
 app.ports.connect.subscribe(params => {
   connection = mysql.createConnection(
     {
@@ -90,7 +92,7 @@ app.ports.runCodemirror.subscribe(id => {
 
         observer.disconnect();
 
-        let editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql"});
+        editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql"});
 
         editor.setOption("extraKeys", {
           "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
