@@ -344,17 +344,7 @@ viewLogin model =
         div []
             [ viewErrors model.errors
             , div [ class "connect-form" ]
-                [ button [ onClick <| Connect <| localhost, disabled isConnecting ] [ text "Connect.." ]
-                , div
-                    [ class <|
-                        "progress-indicator _small"
-                            ++ (if isConnecting then
-                                    " _visible"
-                                else
-                                    ""
-                               )
-                    ]
-                    []
+                [ buttonWithIndicator [ onClick <| Connect localhost, disabled isConnecting ] [ text "Connect.." ] (rightOrNo isConnecting)
                 ]
             ]
 
@@ -371,6 +361,42 @@ viewWorkspace model =
 
 viewErrors errors =
     div [] (List.map text errors)
+
+
+type Indicator
+    = NoIndicator
+    | IndicatorOnTheLeft
+    | IndicatorOnTheRight
+
+
+rightOrNo param =
+    if param then
+        IndicatorOnTheRight
+    else
+        NoIndicator
+
+
+leftOrNo param =
+    if param then
+        IndicatorOnTheLeft
+    else
+        NoIndicator
+
+
+buttonWithIndicator attrs childs which =
+    let
+        indicatorType =
+            case which of
+                IndicatorOnTheLeft ->
+                    " _left"
+
+                IndicatorOnTheRight ->
+                    " _right"
+
+                NoIndicator ->
+                    ""
+    in
+        button (attrs ++ [ class <| "button-with-indicator" ++ indicatorType ]) childs
 
 
 viewHeader { connection, result } =
@@ -411,33 +437,8 @@ viewHeader { connection, result } =
 
         closeConnection =
             div [ class "header-menu-item close" ]
-                [ button [ class "close-button", disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ]
-                , div
-                    [ class <|
-                        "progress-indicator _small"
-                            ++ (if closing then
-                                    " _visible"
-                                else
-                                    ""
-                               )
-                    ]
-                    []
+                [ buttonWithIndicator [ disabled closing, onClick <| CloseConnection <| threadId ] [ text "Close" ] (rightOrNo closing)
                 ]
-
-        runningIndicator =
-            div
-                [ class <|
-                    "progress-indicator _small"
-                        ++ (if (queryIsRunning result) then
-                                " _visible"
-                            else
-                                ""
-                           )
-                ]
-                []
-
-        run =
-            button [ disabled closing, onClick TryToRun ] [ text "Run" ]
     in
         header [ class "header" ]
             [ div [ class "header-menu" ]
@@ -445,7 +446,9 @@ viewHeader { connection, result } =
                 , closeConnection
                 ]
             , div [ class "header-buttons" ]
-                [ div [ class "header-buttons-item _run" ] [ runningIndicator, run ]
+                [ div [ class "header-buttons-item _run" ]
+                    [ buttonWithIndicator [ disabled closing, onClick TryToRun ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
+                    ]
                 ]
             ]
 
