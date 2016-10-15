@@ -92,7 +92,7 @@ app.ports.runCodemirror.subscribe(id => {
 
         observer.disconnect();
 
-        editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql"});
+        editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql", autofocus: true});
 
         editor.setOption("extraKeys", {
           "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
