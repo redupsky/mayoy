@@ -98,9 +98,7 @@ app.ports.runCodemirror.subscribe(id => {
           "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
         });
 
-        app.ports.requestTextFromCodemirror.subscribe(() => {
-          app.ports.receiveTextFromCodemirror.send(editor.getValue());
-        });
+        editor.on("change", () => app.ports.receiveTextFromCodemirror.send(editor.getValue()));
       }
     });
   });

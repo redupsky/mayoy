@@ -6,6 +6,8 @@ import Html.Events exposing (onInput, onClick, on, keyCode)
 import Html.App as App
 import Json.Decode
 import Time exposing (Time, second)
+import List
+import String
 
 
 textAreaId =
@@ -46,9 +48,6 @@ port closeConnectionFailed : (( ThreadId, String ) -> msg) -> Sub msg
 port runCodemirror : String -> Cmd msg
 
 
-port requestTextFromCodemirror : String -> Cmd msg
-
-
 port receiveTextFromCodemirror : (String -> msg) -> Sub msg
 
 
@@ -77,8 +76,8 @@ subscriptions model =
     Sub.batch
         [ connectionEstablished ConnectionEstablished
         , connectionFailed ConnectionFailed
-        , pressRunInCodemirror (\_ -> TryToRun)
-        , receiveTextFromCodemirror ReceiveTextAndRun
+        , pressRunInCodemirror (\_ -> RunQuery)
+        , receiveTextFromCodemirror ReceiveValueFromEditor
         , connectionClosed ConnectionClosed
         , closeConnectionFailed CloseConnectionFailed
         , queryFailed QueryFailed
@@ -166,7 +165,7 @@ localhost =
 type alias Model =
     { errors : List String
     , connection : Connection
-    , text : String
+    , editorValue : String
     , result : Maybe QueryResult
     , status : String
     }
@@ -228,8 +227,7 @@ type Message
     | CloseConnection ThreadId
     | CloseConnectionFailed ( ThreadId, String )
     | ConnectionClosed ThreadId
-    | TryToRun
-    | ReceiveTextAndRun String
+    | ReceiveValueFromEditor String
     | RunQuery
     | QueryFailed ( ThreadId, String )
     | ReceiveColumns ( ThreadId, List Column )
@@ -254,26 +252,30 @@ update msg model =
             ( { model | connection = establishedToClosing model.connection, errors = [] }, close threadId )
 
         CloseConnectionFailed ( threadId, error ) ->
-            ( { model | errors = [ error ], connection = NoConnection, text = "", result = Nothing, status = "" }, Cmd.none )
+            ( { model | errors = [ error ], connection = NoConnection, editorValue = "", result = Nothing, status = "" }, Cmd.none )
 
         ConnectionClosed threadId ->
-            ( { model | errors = [], connection = NoConnection, text = "", result = Nothing, status = "" }, Cmd.none )
+            ( { model | errors = [], connection = NoConnection, editorValue = "", result = Nothing, status = "" }, Cmd.none )
 
-        TryToRun ->
-            ( model, requestTextFromCodemirror "" )
-
-        ReceiveTextAndRun text ->
-            update RunQuery { model | text = text }
+        ReceiveValueFromEditor value ->
+            ( { model | editorValue = value }, Cmd.none )
 
         RunQuery ->
-            ( { model | errors = [], result = Just <| Running 0, status = "" }
-            , case model.connection of
-                Established ( _, threadId ) ->
-                    runQuery ( threadId, model.text )
+            let
+                runQueryIfEstablished =
+                    case model.connection of
+                        Established ( _, threadId ) ->
+                            runQuery ( threadId, model.editorValue )
 
-                _ ->
-                    Cmd.none
-            )
+                        _ ->
+                            Cmd.none
+            in
+                if String.isEmpty model.editorValue then
+                    ( model, Cmd.none )
+                else
+                    ( { model | errors = [], result = Just <| Running 0, status = "" }
+                    , runQueryIfEstablished
+                    )
 
         QueryFailed ( _, error ) ->
             ( { model | errors = [ error ], result = Just <| QueryFails <| error }, Cmd.none )
@@ -374,7 +376,7 @@ viewWorkspace model =
     div [ class "workspace" ]
         [ viewErrors model.errors
         , viewHeader model
-        , viewQuery model.text
+        , viewQuery model.editorValue
         , viewResultTable model.result
         , viewStatus model.status
         ]
@@ -420,7 +422,7 @@ buttonWithIndicator attrs childs which =
         button (attrs ++ [ class <| "button-with-indicator" ++ indicatorType ]) childs
 
 
-viewHeader { connection, result } =
+viewHeader { connection, result, editorValue } =
     let
         closing =
             case connection of
@@ -471,7 +473,7 @@ viewHeader { connection, result } =
                 ]
             , div [ class "header-buttons" ]
                 [ div [ class "header-buttons-item _run" ]
-                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result, onClick TryToRun ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
+                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editorValue, onClick RunQuery ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
                     ]
                 ]
             ]
