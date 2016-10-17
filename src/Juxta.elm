@@ -4,7 +4,6 @@ import Html exposing (text, div, span, textarea, button, table, th, tr, td, tbod
 import Html.Attributes exposing (style, class, id, disabled)
 import Html.Events exposing (onInput, onClick, on, keyCode)
 import Html.App as App
-import Json.Decode
 import Time exposing (Time, second)
 import List
 import String
