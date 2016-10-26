@@ -109,5 +109,9 @@ extractParamsAndThreadId connection =
 --
 
 
+defaultPort =
+    3306
+
+
 localhost =
-    ConnectionParameters ( "localhost", 3306 ) "root" "" Nothing
+    ConnectionParameters ( "localhost", defaultPort ) "root" "" Nothing
