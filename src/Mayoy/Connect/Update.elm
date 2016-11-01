@@ -1,8 +1,8 @@
-module Juxta.Connect.Update exposing (update)
+module Mayoy.Connect.Update exposing (update)
 
-import Juxta.Connect.Message exposing (Message(..))
-import Juxta.Model exposing (Connection(Connecting, Established, Failed))
-import Juxta.App.Port exposing (connect)
+import Mayoy.Connect.Message exposing (Message(..))
+import Mayoy.Model exposing (Connection(Connecting, Established, Failed))
+import Mayoy.App.Port exposing (connect)
 
 
 update msg model =

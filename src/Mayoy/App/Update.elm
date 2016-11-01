@@ -1,15 +1,15 @@
-module Juxta.App.Update exposing (update)
+module Mayoy.App.Update exposing (update)
 
-import Juxta.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
-import Juxta.App.Model exposing (Model(ConnectModel, WorkspaceModel))
-import Juxta.App.Port exposing (runCodemirror)
-import Juxta.Connect.Message
-import Juxta.Connect.Model
-import Juxta.Connect.Update as Connect
-import Juxta.Workspace.Update as Workspace
-import Juxta.Workspace.Message
-import Juxta.Workspace.Model
-import Juxta.Model exposing (Connection(Established))
+import Mayoy.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
+import Mayoy.App.Model exposing (Model(ConnectModel, WorkspaceModel))
+import Mayoy.App.Port exposing (runCodemirror)
+import Mayoy.Connect.Message
+import Mayoy.Connect.Model
+import Mayoy.Connect.Update as Connect
+import Mayoy.Workspace.Update as Workspace
+import Mayoy.Workspace.Message
+import Mayoy.Workspace.Model
+import Mayoy.Model exposing (Connection(Established))
 
 
 textAreaId =
@@ -19,17 +19,17 @@ textAreaId =
 update : Message -> Model -> ( Model, Cmd Message )
 update message model =
     case message of
-        ConnectMessage (Juxta.Connect.Message.ConnectionEstablished ( params, threadId )) ->
+        ConnectMessage (Mayoy.Connect.Message.ConnectionEstablished ( params, threadId )) ->
             let
                 ( mod, _ ) =
-                    Juxta.Workspace.Model.init <| Established ( params, threadId )
+                    Mayoy.Workspace.Model.init <| Established ( params, threadId )
             in
                 ( WorkspaceModel mod, runCodemirror textAreaId )
 
-        WorkspaceMessage (Juxta.Workspace.Message.ConnectionClosed threadId) ->
+        WorkspaceMessage (Mayoy.Workspace.Message.ConnectionClosed threadId) ->
             let
                 ( mod, _ ) =
-                    Juxta.Connect.Model.init
+                    Mayoy.Connect.Model.init
             in
                 ( ConnectModel mod, Cmd.none )
 

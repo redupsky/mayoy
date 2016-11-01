@@ -1,6 +1,6 @@
-port module Juxta.App.Port exposing (..)
+port module Mayoy.App.Port exposing (..)
 
-import Juxta.Model exposing (Connection(..), ConnectionParameters, ThreadId, QueryResult(..), Result, Column, Row, establishedToClosing)
+import Mayoy.Model exposing (Connection(..), ConnectionParameters, ThreadId, QueryResult(..), Result, Column, Row, establishedToClosing)
 import Time exposing (Time)
 
 
@@ -40,7 +40,7 @@ port receiveColumns : (( ThreadId, List Column ) -> msg) -> Sub msg
 port receiveRow : (( ThreadId, Row ) -> msg) -> Sub msg
 
 
-port receiveResult : (( ThreadId, Juxta.Model.Result ) -> msg) -> Sub msg
+port receiveResult : (( ThreadId, Mayoy.Model.Result ) -> msg) -> Sub msg
 
 
 port receiveEnd : (( ThreadId, Time ) -> msg) -> Sub msg

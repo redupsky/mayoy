@@ -1,6 +1,6 @@
-module Juxta.Connect.Message exposing (Message(..))
+module Mayoy.Connect.Message exposing (Message(..))
 
-import Juxta.Model exposing (ConnectionParameters, ThreadId)
+import Mayoy.Model exposing (ConnectionParameters, ThreadId)
 
 
 type Message

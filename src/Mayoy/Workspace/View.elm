@@ -1,12 +1,12 @@
-module Juxta.Workspace.View exposing (view)
+module Mayoy.Workspace.View exposing (view)
 
 import Html exposing (div, text, textarea, header, select, option, table, thead, th, tbody, tr, td)
 import Html.Attributes exposing (id, class, disabled)
 import Html.Events exposing (onClick)
 import String
-import Juxta.Model exposing (Connection(Closing), QueryResult(Rows), queryIsRunning, connectionName, extractParamsAndThreadId)
-import Juxta.Component.ButtonWithIndicator exposing (buttonWithIndicator, leftOrNo, rightOrNo)
-import Juxta.Workspace.Message exposing (Message(RunQuery, CloseConnection))
+import Mayoy.Model exposing (Connection(Closing), QueryResult(Rows), queryIsRunning, connectionName, extractParamsAndThreadId)
+import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, leftOrNo, rightOrNo)
+import Mayoy.Workspace.Message exposing (Message(RunQuery, CloseConnection))
 
 
 textAreaId =

@@ -1,12 +1,12 @@
-module Juxta.Connect.View exposing (view)
+module Mayoy.Connect.View exposing (view)
 
 import Html exposing (div, text, form, label, input)
 import Html.Attributes exposing (class, disabled, type', name, value, placeholder)
 import Html.Events exposing (onClick, onInput, onSubmit)
-import Juxta.Model exposing (Connection(Connecting), localhost, defaultPort)
-import Juxta.Connect.Message exposing (Message(Connect, ChangeFormHost, ChangeFormPort, ChangeFormUser, ChangeFormPassword))
-import Juxta.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo)
-import Juxta.Connect.Model exposing (formToConnectionParameters)
+import Mayoy.Model exposing (Connection(Connecting), localhost, defaultPort)
+import Mayoy.Connect.Message exposing (Message(Connect, ChangeFormHost, ChangeFormPort, ChangeFormUser, ChangeFormPassword))
+import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo)
+import Mayoy.Connect.Model exposing (formToConnectionParameters)
 
 
 view model =

@@ -5,7 +5,7 @@ let win;
 const menu = Menu.buildFromTemplate(
   [
     {
-      label: "Juxta",
+      label: "Mayoy",
       submenu: [
         {
           role: "about"

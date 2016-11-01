@@ -1,6 +1,6 @@
-let Elm = require("./juxta");
+let Elm = require("./mayoy");
 
-let app = Elm.Juxta.fullscreen();
+let app = Elm.Mayoy.fullscreen();
 
 let mysql = require("mysql");
 

@@ -1,12 +1,12 @@
-module Juxta.App.Subscriptions exposing (subscriptions)
+module Mayoy.App.Subscriptions exposing (subscriptions)
 
-import Juxta.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
-import Juxta.App.Model exposing (Model(WorkspaceModel))
-import Juxta.Connect.Message as Connect
-import Juxta.Workspace.Message as Workspace
-import Juxta.App.Port exposing (..)
+import Mayoy.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
+import Mayoy.App.Model exposing (Model(WorkspaceModel))
+import Mayoy.Connect.Message as Connect
+import Mayoy.Workspace.Message as Workspace
+import Mayoy.App.Port exposing (..)
 import Time exposing (Time, second)
-import Juxta.Model exposing (QueryResult(Running))
+import Mayoy.Model exposing (QueryResult(Running))
 
 
 subscriptions model =

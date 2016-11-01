@@ -1,4 +1,4 @@
-module Juxta.Model exposing (..)
+module Mayoy.Model exposing (..)
 
 import Time exposing (Time)
 

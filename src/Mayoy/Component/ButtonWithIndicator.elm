@@ -1,4 +1,4 @@
-module Juxta.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo, leftOrNo)
+module Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo, leftOrNo)
 
 import Html exposing (button)
 import Html.Attributes exposing (class)

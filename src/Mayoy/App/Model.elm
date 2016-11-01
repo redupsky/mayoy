@@ -1,7 +1,7 @@
-module Juxta.App.Model exposing (Model(ConnectModel, WorkspaceModel), init)
+module Mayoy.App.Model exposing (Model(ConnectModel, WorkspaceModel), init)
 
-import Juxta.Connect.Model as Connect
-import Juxta.Workspace.Model as Workspace
+import Mayoy.Connect.Model as Connect
+import Mayoy.Workspace.Model as Workspace
 
 
 type Model

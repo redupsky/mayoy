@@ -1,9 +1,9 @@
-module Juxta.App.View exposing (view)
+module Mayoy.App.View exposing (view)
 
-import Juxta.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
-import Juxta.App.Model exposing (Model(ConnectModel, WorkspaceModel))
-import Juxta.Connect.View as Connect
-import Juxta.Workspace.View as Workspace
+import Mayoy.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
+import Mayoy.App.Model exposing (Model(ConnectModel, WorkspaceModel))
+import Mayoy.Connect.View as Connect
+import Mayoy.Workspace.View as Workspace
 import Html.App
 
 

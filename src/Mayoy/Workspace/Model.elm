@@ -1,6 +1,6 @@
-module Juxta.Workspace.Model exposing (Model, init)
+module Mayoy.Workspace.Model exposing (Model, init)
 
-import Juxta.Model exposing (Connection(NoConnection), QueryResult)
+import Mayoy.Model exposing (Connection(NoConnection), QueryResult)
 
 
 type alias Model =

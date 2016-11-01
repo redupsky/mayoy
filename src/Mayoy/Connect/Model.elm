@@ -1,7 +1,7 @@
-module Juxta.Connect.Model exposing (Model, init, formToConnectionParameters)
+module Mayoy.Connect.Model exposing (Model, init, formToConnectionParameters)
 
 import String
-import Juxta.Model exposing (Connection(NoConnection), ConnectionParameters, defaultPort)
+import Mayoy.Model exposing (Connection(NoConnection), ConnectionParameters, defaultPort)
 
 
 type alias Model =

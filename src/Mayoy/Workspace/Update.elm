@@ -1,8 +1,8 @@
-module Juxta.Workspace.Update exposing (update)
+module Mayoy.Workspace.Update exposing (update)
 
-import Juxta.Workspace.Message exposing (..)
-import Juxta.Model exposing (QueryResult(..), Connection(..), establishedToClosing)
-import Juxta.App.Port exposing (close, runQuery)
+import Mayoy.Workspace.Message exposing (..)
+import Mayoy.Model exposing (QueryResult(..), Connection(..), establishedToClosing)
+import Mayoy.App.Port exposing (close, runQuery)
 import Time exposing (second)
 import String
 
@@ -44,13 +44,13 @@ update msg model =
                     ( model, Cmd.none )
 
         ReceiveResult ( _, result ) ->
-            ( { model | result = Just <| Juxta.Model.Ok <| result }, Cmd.none )
+            ( { model | result = Just <| Mayoy.Model.Ok <| result }, Cmd.none )
 
         ReceiveEnd ( _, duration ) ->
             let
                 result =
                     case model.result of
-                        Just (Juxta.Model.Ok result) ->
+                        Just (Mayoy.Model.Ok result) ->
                             "Query OK, " ++ toString result.affectedRows ++ " rows affected, " ++ toString result.warningCount ++ " warning"
 
                         Just (Rows ( _, [] )) ->
