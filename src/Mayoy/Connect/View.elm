@@ -1,6 +1,6 @@
 module Mayoy.Connect.View exposing (view)
 
-import Html exposing (div, text, form, label, input)
+import Html exposing (div, text, form, label, input, ul, li)
 import Html.Attributes exposing (class, disabled, type', name, value, placeholder)
 import Html.Events exposing (onClick, onInput, onSubmit)
 import Mayoy.Model exposing (Connection(Connecting), localhost, defaultPort)
@@ -17,7 +17,11 @@ view model =
 
 
 viewErrors errors =
-    div [] (List.map text errors)
+    let
+        item error =
+            li [ class "connect-errors-item" ] [ text error ]
+    in
+        ul [ class "connect-errors" ] (List.map item errors)
 
 
 viewConnect { connection, form } =

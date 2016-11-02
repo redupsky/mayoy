@@ -36,6 +36,15 @@ body {
   justify-content: center;
 }
 
+.connect-errors {
+  position: absolute;
+  top: 21px;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  list-style-type: none;
+}
+
 .connect-form {
   padding: 21px;
   align-self: center;
