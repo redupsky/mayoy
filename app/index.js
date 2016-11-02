@@ -23,7 +23,7 @@ app.ports.connect.subscribe(params => {
 
   connection.connect(error => {
     if (error) {
-      app.ports.connectionFailed.send(error.message);
+      app.ports.connectionFailed.send(error.message.replace(/^[A-Z_]+:\s+/, ""));
       return;
     }
 
