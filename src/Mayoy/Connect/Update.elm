@@ -21,7 +21,7 @@ update msg model =
                 ( { model | errors = [ error ], connection = Failed ( error, 0 ) }, Cmd.none )
 
             ChangeFormHost host ->
-                Debug.log "" ( { model | form = { form | host = host } }, Cmd.none )
+                ( { model | form = { form | host = host } }, Cmd.none )
 
             ChangeFormPort portNumber ->
                 ( { model | form = { form | portNumber = portNumber } }, Cmd.none )
