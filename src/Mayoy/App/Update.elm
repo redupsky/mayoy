@@ -2,14 +2,14 @@ module Mayoy.App.Update exposing (update)
 
 import Mayoy.App.Message exposing (Message(ConnectMessage, WorkspaceMessage))
 import Mayoy.App.Model exposing (Model(ConnectModel, WorkspaceModel))
-import Mayoy.App.Port exposing (runCodemirror)
+import Mayoy.App.Port exposing (saveConnectionParamsToLocalStorage, runCodemirror)
 import Mayoy.Connect.Message
 import Mayoy.Connect.Model
 import Mayoy.Connect.Update as Connect
 import Mayoy.Workspace.Update as Workspace
 import Mayoy.Workspace.Message
 import Mayoy.Workspace.Model
-import Mayoy.Model exposing (Connection(Established))
+import Mayoy.Model exposing (Connection(Established), connectionName)
 
 
 textAreaId =
@@ -24,7 +24,12 @@ update message model =
                 ( mod, _ ) =
                     Mayoy.Workspace.Model.init <| Established ( params, threadId )
             in
-                ( WorkspaceModel mod, runCodemirror textAreaId )
+                ( WorkspaceModel mod
+                , Cmd.batch
+                    [ saveConnectionParamsToLocalStorage ( connectionName params, params )
+                    , runCodemirror textAreaId
+                    ]
+                )
 
         WorkspaceMessage (Mayoy.Workspace.Message.ConnectionClosed threadId) ->
             let

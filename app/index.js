@@ -10,6 +10,8 @@ let connection;
 
 let editor;
 
+const historyStorageKey = "mayoy_connection_history";
+
 app.ports.connect.subscribe(params => {
   connection = mysql.createConnection(
     {
@@ -82,6 +84,18 @@ app.ports.runQuery.subscribe(([threadId, sql]) => {
     let stop = new Date();
     app.ports.receiveEnd.send([threadId, (stop - start) / 1000]);
   });
+});
+
+app.ports.saveConnectionParamsToLocalStorage.subscribe(([name, params]) => {
+  let history = JSON.parse(localStorage.getItem(historyStorageKey));
+
+  if (history === null) {
+    history = {};
+  }
+
+  history[name] = params;
+
+  localStorage.setItem(historyStorageKey, JSON.stringify(history));
 });
 
 app.ports.runCodemirror.subscribe(id => {

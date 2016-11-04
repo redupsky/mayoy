@@ -22,6 +22,9 @@ port connectionClosed : (ThreadId -> msg) -> Sub msg
 port closeConnectionFailed : (( ThreadId, String ) -> msg) -> Sub msg
 
 
+port saveConnectionParamsToLocalStorage : ( String, ConnectionParameters ) -> Cmd msg
+
+
 port runCodemirror : String -> Cmd msg
 
 
