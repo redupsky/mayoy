@@ -19,6 +19,24 @@ const menu = Menu.buildFromTemplate(
       ]
     },
     {
+      label: "File",
+      submenu: [
+          {
+              label: "New Window",
+              accelerator: "Command+N",
+              click: (menuItem, window) => {
+                createWindow();
+              }
+          },
+          {
+            type: "separator"
+          },
+          {
+              role: "close"
+          }
+      ]
+    },
+    {
       label: "Help",
       submenu: [
         {
