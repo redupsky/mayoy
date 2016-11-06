@@ -98,6 +98,8 @@ app.ports.saveConnectionParamsToLocalStorage.subscribe(([name, params]) => {
   localStorage.setItem(historyStorageKey, JSON.stringify(history));
 });
 
+app.ports.changeTitle.subscribe(title => document.title = title);
+
 app.ports.runCodemirror.subscribe(id => {
 
   let observer = new MutationObserver(mutations => {
