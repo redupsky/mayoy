@@ -11,7 +11,7 @@ type Model
 
 init =
     let
-        ( model, _ ) =
+        ( model, cmd ) =
             Connect.init
     in
-        ( ConnectModel model, Cmd.none )
+        ( ConnectModel model, cmd )

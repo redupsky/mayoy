@@ -31,3 +31,6 @@ update msg model =
 
             ChangeFormPassword password ->
                 ( { model | form = { form | password = password } }, Cmd.none )
+
+            ReceiveConnectionHistory connections ->
+                ( { model | history = connections }, Cmd.none )

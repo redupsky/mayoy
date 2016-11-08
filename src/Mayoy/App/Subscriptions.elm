@@ -15,6 +15,7 @@ subscriptions model =
         , connectionFailed (ConnectMessage << Connect.ConnectionFailed)
         , connectionClosed (WorkspaceMessage << Workspace.ConnectionClosed)
         , closeConnectionFailed (WorkspaceMessage << Workspace.CloseConnectionFailed)
+        , receiveConnectionHistoryFromLocalStorage (ConnectMessage << Connect.ReceiveConnectionHistory)
         , pressRunInCodemirror (WorkspaceMessage << \_ -> Workspace.RunQuery)
         , receiveTextFromCodemirror (WorkspaceMessage << Workspace.ReceiveValueFromEditor)
         , queryFailed (WorkspaceMessage << Workspace.QueryFailed)

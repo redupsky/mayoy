@@ -11,3 +11,4 @@ type Message
     | ChangeFormPort String
     | ChangeFormUser String
     | ChangeFormPassword String
+    | ReceiveConnectionHistory (List ConnectionParameters)

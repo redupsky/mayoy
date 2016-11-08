@@ -2,12 +2,14 @@ module Mayoy.Connect.Model exposing (Model, init, formToConnectionParameters)
 
 import String
 import Mayoy.Model exposing (Connection(NoConnection), ConnectionParameters, defaultPort)
+import Mayoy.App.Port exposing (getConnectionHistoryFromLocalStorage)
 
 
 type alias Model =
     { errors : List String
     , connection : Connection
     , form : Form
+    , history : List ConnectionParameters
     }
 
 
@@ -38,4 +40,4 @@ formToConnectionParameters { host, portNumber, user, password, database } =
 
 
 init =
-    ( Model [] NoConnection emptyForm, Cmd.none )
+    ( Model [] NoConnection emptyForm [], getConnectionHistoryFromLocalStorage () )

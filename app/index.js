@@ -98,6 +98,12 @@ app.ports.saveConnectionParamsToLocalStorage.subscribe(([name, params]) => {
   localStorage.setItem(historyStorageKey, JSON.stringify(history));
 });
 
+app.ports.getConnectionHistoryFromLocalStorage.subscribe(() => {
+  let history = JSON.parse(localStorage.getItem(historyStorageKey));
+  app.ports.receiveConnectionHistoryFromLocalStorage.send(Object.keys(history).map(key => history[key]));
+});
+
+
 app.ports.changeTitle.subscribe(title => document.title = title);
 
 app.ports.runCodemirror.subscribe(id => {

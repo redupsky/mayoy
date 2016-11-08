@@ -25,6 +25,12 @@ port closeConnectionFailed : (( ThreadId, String ) -> msg) -> Sub msg
 port saveConnectionParamsToLocalStorage : ( String, ConnectionParameters ) -> Cmd msg
 
 
+port getConnectionHistoryFromLocalStorage : () -> Cmd msg
+
+
+port receiveConnectionHistoryFromLocalStorage : (List ConnectionParameters -> msg) -> Sub msg
+
+
 port changeTitle : String -> Cmd msg
 
 
