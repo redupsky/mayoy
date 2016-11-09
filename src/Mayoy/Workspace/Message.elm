@@ -6,6 +6,7 @@ import Time exposing (Time)
 
 type Message
     = ReceiveValueFromEditor String
+    | ReceiveValueInSelectionFromEditor (Maybe String)
     | RunQuery
     | QueryFailed ( ThreadId, String )
     | ReceiveColumns ( ThreadId, List Column )

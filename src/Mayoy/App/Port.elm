@@ -40,6 +40,9 @@ port runCodemirror : String -> Cmd msg
 port receiveTextFromCodemirror : (String -> msg) -> Sub msg
 
 
+port selectText : (Maybe String -> msg) -> Sub msg
+
+
 port runQuery : ( ThreadId, String ) -> Cmd msg
 
 

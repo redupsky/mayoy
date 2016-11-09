@@ -121,6 +121,11 @@ app.ports.runCodemirror.subscribe(id => {
         });
 
         editor.on("change", () => app.ports.receiveTextFromCodemirror.send(editor.getValue()));
+
+        editor.on("cursorActivity", () => {
+          let text = editor.getSelection();
+          app.ports.selectText.send(text !== "" ? text : null)
+        });
       }
     });
   });

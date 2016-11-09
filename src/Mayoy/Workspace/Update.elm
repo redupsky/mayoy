@@ -12,6 +12,9 @@ update msg model =
         ReceiveValueFromEditor value ->
             ( { model | editorValue = value }, Cmd.none )
 
+        ReceiveValueInSelectionFromEditor value ->
+            ( { model | selection = value }, Cmd.none )
+
         RunQuery ->
             let
                 runQueryIfEstablished =

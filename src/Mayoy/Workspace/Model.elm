@@ -7,10 +7,11 @@ type alias Model =
     { errors : List String
     , connection : Connection
     , editorValue : String
+    , selection : Maybe String
     , result : Maybe QueryResult
     , status : String
     }
 
 
 init connection =
-    ( Model [] connection "" Nothing "", Cmd.none )
+    ( Model [] connection "" Nothing Nothing "", Cmd.none )

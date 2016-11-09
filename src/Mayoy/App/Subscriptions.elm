@@ -18,6 +18,7 @@ subscriptions model =
         , receiveConnectionHistoryFromLocalStorage (ConnectMessage << Connect.ReceiveConnectionHistory)
         , pressRunInCodemirror (WorkspaceMessage << \_ -> Workspace.RunQuery)
         , receiveTextFromCodemirror (WorkspaceMessage << Workspace.ReceiveValueFromEditor)
+        , selectText (WorkspaceMessage << Workspace.ReceiveValueInSelectionFromEditor)
         , queryFailed (WorkspaceMessage << Workspace.QueryFailed)
         , receiveColumns (WorkspaceMessage << Workspace.ReceiveColumns)
         , receiveRow (WorkspaceMessage << Workspace.ReceiveRow)
