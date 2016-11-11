@@ -7,6 +7,15 @@ import Time exposing (second)
 import String
 
 
+runQueryIfEstablished connection query =
+    case connection of
+        Established ( _, threadId ) ->
+            runQuery ( threadId, query )
+
+        _ ->
+            Cmd.none
+
+
 update msg model =
     case msg of
         ReceiveValueFromEditor value ->
@@ -16,21 +25,20 @@ update msg model =
             ( { model | selection = value }, Cmd.none )
 
         RunQuery ->
-            let
-                runQueryIfEstablished =
-                    case model.connection of
-                        Established ( _, threadId ) ->
-                            runQuery ( threadId, model.editorValue )
+            if String.isEmpty model.editorValue then
+                ( model, Cmd.none )
+            else
+                ( { model | errors = [], result = Just <| Running 0, status = "" }
+                , runQueryIfEstablished model.connection model.editorValue
+                )
 
-                        _ ->
-                            Cmd.none
-            in
-                if String.isEmpty model.editorValue then
+        RunQueryInSelection ->
+            case model.selection of
+                Just text ->
+                    ( { model | errors = [], result = Just <| Running 0, status = "" }, runQueryIfEstablished model.connection text )
+
+                Nothing ->
                     ( model, Cmd.none )
-                else
-                    ( { model | errors = [], result = Just <| Running 0, status = "" }
-                    , runQueryIfEstablished
-                    )
 
         QueryFailed ( _, error ) ->
             ( { model | errors = [ error ], result = Just <| QueryFails <| error }, Cmd.none )

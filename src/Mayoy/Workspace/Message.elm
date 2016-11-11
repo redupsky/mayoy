@@ -8,6 +8,7 @@ type Message
     = ReceiveValueFromEditor String
     | ReceiveValueInSelectionFromEditor (Maybe String)
     | RunQuery
+    | RunQueryInSelection
     | QueryFailed ( ThreadId, String )
     | ReceiveColumns ( ThreadId, List Column )
     | ReceiveRow ( ThreadId, Row )

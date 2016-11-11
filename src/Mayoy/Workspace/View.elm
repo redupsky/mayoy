@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 import String
 import Mayoy.Model exposing (Connection(Closing), QueryResult(Rows), queryIsRunning, connectionName, extractParamsAndThreadId)
 import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, leftOrNo, rightOrNo)
-import Mayoy.Workspace.Message exposing (Message(RunQuery, CloseConnection))
+import Mayoy.Workspace.Message exposing (Message(RunQuery, RunQueryInSelection, CloseConnection))
 
 
 textAreaId =
@@ -27,7 +27,7 @@ viewErrors errors =
     div [] (List.map text errors)
 
 
-viewHeader { connection, result, editorValue } =
+viewHeader { connection, result, editorValue, selection } =
     let
         closing =
             case connection of
@@ -70,6 +70,14 @@ viewHeader { connection, result, editorValue } =
                     ]
                     (rightOrNo closing)
                 ]
+
+        run =
+            case selection of
+                Just query ->
+                    RunQueryInSelection
+
+                Nothing ->
+                    RunQuery
     in
         header [ class "header" ]
             [ div [ class "header-menu" ]
@@ -78,7 +86,7 @@ viewHeader { connection, result, editorValue } =
                 ]
             , div [ class "header-buttons" ]
                 [ div [ class "header-buttons-item _run" ]
-                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editorValue, onClick RunQuery ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
+                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editorValue, onClick run ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
                     ]
                 ]
             ]
