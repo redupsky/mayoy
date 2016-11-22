@@ -1,4 +1,4 @@
-module Mayoy.Connect.Model exposing (Model, init, formToConnectionParameters)
+module Mayoy.Connect.Model exposing (Model, init, Form, formToConnectionParameters, connectionParametersToForm)
 
 import String
 import Mayoy.Model exposing (Connection(NoConnection), ConnectionParameters, defaultPort)
@@ -37,6 +37,25 @@ formToConnectionParameters { host, portNumber, user, password, database } =
                     defaultPort
     in
         ConnectionParameters ( host, portNumberInt ) user password Nothing
+
+
+connectionParametersToForm { hostAndPort, user, password, database } =
+    let
+        host =
+            fst hostAndPort
+
+        port' =
+            toString <| snd hostAndPort
+
+        database' =
+            case database of
+                Just database ->
+                    database
+
+                Nothing ->
+                    ""
+    in
+        Form host port' user password database'
 
 
 init =

@@ -99,19 +99,22 @@ app.ports.saveConnectionParamsToLocalStorage.subscribe(([name, params]) => {
 });
 
 app.ports.getConnectionHistoryFromLocalStorage.subscribe(() => {
-  let history = JSON.parse(localStorage.getItem(historyStorageKey));
-  app.ports.receiveConnectionHistoryFromLocalStorage.send(Object.keys(history).map(key => history[key]));
+  const history = JSON.parse(localStorage.getItem(historyStorageKey));
+
+  if (history !== null) {
+    app.ports.receiveConnectionHistoryFromLocalStorage.send(Object.keys(history).map(key => history[key]));
+  }
 });
 
 
 app.ports.changeTitle.subscribe(title => document.title = title);
 
 app.ports.runCodemirror.subscribe(id => {
-
   let observer = new MutationObserver(mutations => {
     mutations.forEach(mutation => {
-      if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].className === "editor") {
-
+      if (mutation.addedNodes.length > 0 && (mutation.addedNodes[0].id === id ||
+        mutation.addedNodes[0].className === id)
+      ) {
         observer.disconnect();
 
         editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql", autofocus: true});

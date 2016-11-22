@@ -34,6 +34,7 @@ body {
   background-color: #eee;
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }
 
 .connect-errors {
@@ -43,11 +44,14 @@ body {
   padding: 0;
   font-size: 12px;
   list-style-type: none;
+  align-self: center;
 }
 
 .connect-form {
-  padding: 21px;
+  margin: 21px;
   align-self: center;
+  width: 227px;
+  margin-top: -50px;
 }
 
 .connect-form-item {
@@ -55,13 +59,13 @@ body {
 }
 
 .connect-form-item._connect {
-  padding-left: 86px;
-  margin-top: 7px;
+  margin-top: 11px;
+  text-align: center;
 }
 
 .connect-form-label {
   display: inline-block;
-  width: 75px;
+  width: 60px;
   text-align: right;
   margin-right: 11px;
   font-size: 13px;
@@ -69,11 +73,51 @@ body {
 
 .connect-form-input {
   font-size: 13px;
+  width: 150px;
 }
 
-.connect-form-button,
-.connect-form button {
+.connect-form-item._connect button {
   font-size: 13px;
+}
+
+.connection-history {
+  align-self: center;
+  border-top: #ddd 1px solid;
+  margin-top: 21px;
+}
+
+.connection-history-header {
+  font-weight: normal;
+  font-size: 12px;
+  text-align: center;
+  display: inline-block;
+  margin-bottom: 0px;
+  padding: 0 7px;
+  background-color: #eee;
+  position: relative;
+  top: -17px;
+  left: 91.5px;
+}
+
+.connection-history-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  max-height: 100px;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  width: 227px;
+}
+
+.connection-history-list-item {
+  cursor: pointer;
+}
+
+.connection-history-list-item-label {
+  width: 60px;
+  display: inline-block;
+  margin-right: 11px;
+  text-align: right;
 }
 
 .header {

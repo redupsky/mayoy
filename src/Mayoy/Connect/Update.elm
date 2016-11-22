@@ -20,6 +20,9 @@ update msg model =
             ConnectionFailed error ->
                 ( { model | errors = [ error ], connection = Failed ( error, 0 ) }, Cmd.none )
 
+            ChangeForm newForm ->
+                ( { model | form = newForm }, Cmd.none )
+
             ChangeFormHost host ->
                 ( { model | form = { form | host = host } }, Cmd.none )
 
