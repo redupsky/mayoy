@@ -23,7 +23,7 @@ type alias Form =
 
 
 emptyForm =
-    Form "localhost" (toString defaultPort) "root" "" ""
+    Form "" "" "" "" ""
 
 
 formToConnectionParameters { host, portNumber, user, password, database } =
