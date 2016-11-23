@@ -37,10 +37,11 @@ app.ports.close.subscribe(threadId => {
   connection.end(error => {
     if (error) {
       app.ports.closeConnectionFailed.send([threadId, error.message]);
-      return;
+    } else {
+      app.ports.connectionClosed.send(threadId);
     }
 
-    app.ports.connectionClosed.send(threadId);
+    editor.toTextArea(); // Fucking magic destroy of Codemirror
   });
 });
 
@@ -105,7 +106,6 @@ app.ports.getConnectionHistoryFromLocalStorage.subscribe(() => {
     app.ports.receiveConnectionHistoryFromLocalStorage.send(Object.keys(history).map(key => history[key]));
   }
 });
-
 
 app.ports.changeTitle.subscribe(title => document.title = title);
 
