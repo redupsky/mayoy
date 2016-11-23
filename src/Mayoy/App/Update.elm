@@ -40,7 +40,9 @@ update message model =
                 ( mod, _ ) =
                     Mayoy.Connect.Model.init
             in
-                ( ConnectModel mod, Cmd.none )
+                ( ConnectModel mod
+                , Cmd.batch [ changeTitle "Connect to..." ]
+                )
 
         ConnectMessage connectMessage ->
             case model of
