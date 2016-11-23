@@ -37,12 +37,10 @@ update message model =
 
         WorkspaceMessage (Mayoy.Workspace.Message.ConnectionClosed threadId) ->
             let
-                ( mod, _ ) =
+                ( model, message ) =
                     Mayoy.Connect.Model.init
             in
-                ( ConnectModel mod
-                , Cmd.batch [ changeTitle "Connect to..." ]
-                )
+                ( ConnectModel model, message )
 
         ConnectMessage connectMessage ->
             case model of
