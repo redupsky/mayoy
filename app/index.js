@@ -1,16 +1,15 @@
 let Elm = require("./mayoy");
+let mysql = require("mysql");
+let packets = require("mysql/lib/protocol/packets");
 
 let app = Elm.Mayoy.fullscreen();
 
-let mysql = require("mysql");
-
-let packets = require("mysql/lib/protocol/packets");
-
 let connection;
-
 let editor;
 
 const historyStorageKey = "mayoy_connection_history";
+
+const codemirrorOptions = {lineNumbers: true, mode: "sql", autofocus: true, lineNumbers: false};
 
 app.ports.connect.subscribe(params => {
   connection = mysql.createConnection(
@@ -117,7 +116,7 @@ app.ports.runCodemirror.subscribe(id => {
       ) {
         observer.disconnect();
 
-        editor = CodeMirror.fromTextArea(document.getElementById(id), {lineNumbers: true, mode: "sql", autofocus: true});
+        editor = CodeMirror.fromTextArea(document.getElementById(id), codemirrorOptions);
 
         editor.setOption("extraKeys", {
           "Cmd-R": () => app.ports.pressRunInCodemirror.send("")
