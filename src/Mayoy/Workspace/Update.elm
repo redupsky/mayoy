@@ -24,7 +24,7 @@ update msg model =
         ReceiveValueInSelectionFromEditor value ->
             ( { model | selection = value }, Cmd.none )
 
-        RunQuery ->
+        RunAllAsQuery ->
             if String.isEmpty model.editorValue then
                 ( model, Cmd.none )
             else
