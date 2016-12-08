@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 import String
 import Mayoy.Model exposing (Connection(Closing), QueryResult(Rows), queryIsRunning, connectionName, extractParamsAndThreadId)
 import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, leftOrNo, rightOrNo)
-import Mayoy.Workspace.Message exposing (Message(RunAllAsQuery, RunQueryInSelection, CloseConnection))
+import Mayoy.Workspace.Message exposing (Message(Run, CloseConnection))
 
 
 textAreaId =
@@ -70,14 +70,6 @@ viewHeader { connection, result, editorValue, selection } =
                     ]
                     (rightOrNo closing)
                 ]
-
-        run =
-            case selection of
-                Just query ->
-                    RunQueryInSelection
-
-                Nothing ->
-                    RunAllAsQuery
     in
         header [ class "header" ]
             [ div [ class "header-menu" ]
@@ -86,7 +78,7 @@ viewHeader { connection, result, editorValue, selection } =
                 ]
             , div [ class "header-buttons" ]
                 [ div [ class "header-buttons-item _run" ]
-                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editorValue, onClick run ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
+                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editorValue, onClick Run ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
                     ]
                 ]
             ]

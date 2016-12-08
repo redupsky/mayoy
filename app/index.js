@@ -128,6 +128,12 @@ app.ports.runCodemirror.subscribe(id => {
           let text = editor.getSelection();
           app.ports.selectText.send(text !== "" ? text : null);
         });
+
+        editor.on("cursorActivity", () => {
+          let {line} = editor.getCursor();
+          let text = editor.getLine(line);
+          app.ports.receiveTextInCurrentLineFromCodemirror.send(text !== "" ? text : null);
+        });
       }
     });
   });

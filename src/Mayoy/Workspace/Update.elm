@@ -24,21 +24,41 @@ update msg model =
         ReceiveValueInSelectionFromEditor value ->
             ( { model | selection = value }, Cmd.none )
 
+        ReceiveValueInCurrentLineFromEditor value ->
+            ( { model | queryInCurrentLine = value }, Cmd.none )
+
+        RunQuery query ->
+            ( { model | errors = [], result = Just <| Running 0, status = "" }, runQueryIfEstablished model.connection query )
+
         RunAllAsQuery ->
             if String.isEmpty model.editorValue then
                 ( model, Cmd.none )
             else
-                ( { model | errors = [], result = Just <| Running 0, status = "" }
-                , runQueryIfEstablished model.connection model.editorValue
-                )
+                update (RunQuery model.editorValue) model
 
         RunQueryInSelection ->
             case model.selection of
                 Just text ->
-                    ( { model | errors = [], result = Just <| Running 0, status = "" }, runQueryIfEstablished model.connection text )
+                    update (RunQuery text) model
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        RunQueryInCurrentLine ->
+            case model.queryInCurrentLine of
+                Just text ->
+                    update (RunQuery text) model
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        Run ->
+            case model.selection of
+                Just _ ->
+                    update RunQueryInSelection model
+
+                Nothing ->
+                    update RunQueryInCurrentLine model
 
         QueryFailed ( _, error ) ->
             ( { model | errors = [ error ], result = Just <| QueryFails <| error }, Cmd.none )

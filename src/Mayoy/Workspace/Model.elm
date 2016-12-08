@@ -8,10 +8,11 @@ type alias Model =
     , connection : Connection
     , editorValue : String
     , selection : Maybe String
+    , queryInCurrentLine : Maybe String
     , result : Maybe QueryResult
     , status : String
     }
 
 
 init connection =
-    ( Model [] connection "" Nothing Nothing "", Cmd.none )
+    ( Model [] connection "" Nothing Nothing Nothing "", Cmd.none )

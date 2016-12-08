@@ -7,9 +7,12 @@ import Time exposing (Time)
 type Message
     = ReceiveValueFromEditor String
     | ReceiveValueInSelectionFromEditor (Maybe String)
-    | RunQuery
+    | ReceiveValueInCurrentLineFromEditor (Maybe String)
+    | RunQuery String
+    | Run
     | RunAllAsQuery
     | RunQueryInSelection
+    | RunQueryInCurrentLine
     | QueryFailed ( ThreadId, String )
     | ReceiveColumns ( ThreadId, List Column )
     | ReceiveRow ( ThreadId, Row )
