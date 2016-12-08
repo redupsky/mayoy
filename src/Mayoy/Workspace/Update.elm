@@ -19,25 +19,37 @@ runQueryIfEstablished connection query =
 update msg model =
     case msg of
         ReceiveValueFromEditor value ->
-            ( { model | editorValue = value }, Cmd.none )
+            let
+                editor =
+                    model.editor
+            in
+                ( { model | editor = { editor | value = value } }, Cmd.none )
 
         ReceiveValueInSelectionFromEditor value ->
-            ( { model | selection = value }, Cmd.none )
+            let
+                editor =
+                    model.editor
+            in
+                ( { model | editor = { editor | selection = value } }, Cmd.none )
 
         ReceiveValueInCurrentLineFromEditor value ->
-            ( { model | queryInCurrentLine = value }, Cmd.none )
+            let
+                editor =
+                    model.editor
+            in
+                ( { model | editor = { editor | queryInCurrentLine = value } }, Cmd.none )
 
         RunQuery query ->
             ( { model | errors = [], result = Just <| Running 0, status = "" }, runQueryIfEstablished model.connection query )
 
         RunAllAsQuery ->
-            if String.isEmpty model.editorValue then
+            if String.isEmpty model.editor.value then
                 ( model, Cmd.none )
             else
-                update (RunQuery model.editorValue) model
+                update (RunQuery model.editor.value) model
 
         RunQueryInSelection ->
-            case model.selection of
+            case model.editor.selection of
                 Just text ->
                     update (RunQuery text) model
 
@@ -45,7 +57,7 @@ update msg model =
                     ( model, Cmd.none )
 
         RunQueryInCurrentLine ->
-            case model.queryInCurrentLine of
+            case model.editor.queryInCurrentLine of
                 Just text ->
                     update (RunQuery text) model
 
@@ -53,7 +65,7 @@ update msg model =
                     ( model, Cmd.none )
 
         Run ->
-            case model.selection of
+            case model.editor.selection of
                 Just _ ->
                     update RunQueryInSelection model
 

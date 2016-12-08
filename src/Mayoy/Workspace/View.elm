@@ -17,7 +17,7 @@ view model =
     div [ class "workspace" ]
         [ viewErrors model.errors
         , viewHeader model
-        , viewQuery model.editorValue
+        , viewQuery model.editor.value
         , viewResultTable model.result
         , viewStatus model.status
         ]
@@ -27,7 +27,7 @@ viewErrors errors =
     div [] (List.map text errors)
 
 
-viewHeader { connection, result, editorValue, selection } =
+viewHeader { connection, result, editor } =
     let
         closing =
             case connection of
@@ -78,7 +78,7 @@ viewHeader { connection, result, editorValue, selection } =
                 ]
             , div [ class "header-buttons" ]
                 [ div [ class "header-buttons-item _run" ]
-                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editorValue, onClick Run ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
+                    [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editor.value, onClick Run ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
                     ]
                 ]
             ]
