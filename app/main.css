@@ -1,3 +1,7 @@
+button, select {
+  -webkit-app-region: no-drag;
+}
+
 html, body {
   width: 100%;
   height: 100%;
@@ -8,10 +12,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: white;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.42857143;
-  color: #333333;
+  font: 13px "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .progress-indicator {
@@ -31,7 +32,6 @@ body {
 .connect {
   height: 100%;
   position: relative;
-  background-color: #eee;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -93,7 +93,7 @@ body {
   display: inline-block;
   margin-bottom: 0px;
   padding: 0 7px;
-  background-color: #eee;
+  background-color: #ffffff;
   position: relative;
   top: -17px;
   left: 91.5px;
@@ -121,36 +121,56 @@ body {
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   background-color: #ffffff;
-  height: 42px;
+  height: 37px;
   border-bottom: #f0f0f0 1px solid;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.header-title {
+  flex: 0 0 200px;
+  line-height: 37px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  margin-left: -77px;
 }
 
 .header-menu {
-  float: left;
-  margin: 0 8px;
+  flex: 0 0 150px;
+  height: 37px;
+  overflow: hidden;
 }
 
 .header-menu-item {
+  height: 37px;
+  line-height: 37px;
+}
+
+.header-menu._left {
   float: left;
-  height: 42px;
-  line-height: 42px;
+  margin: 0 8px 0 77px;
 }
 
-.header-menu-item.close {
-  margin-left: 21px;
-}
-
-.header-buttons {
-  height: 42px;
+.header-menu._right {
   float: right;
   margin: 0 8px;
-  line-height: 42px;
 }
 
-.header-buttons-item {
+.header-menu._left .header-menu-item {
   float: left;
+}
+
+.header-menu._right .header-menu-item {
+  float: right;
+}
+
+.header-menu .header-menu-item button {
+  font-size: 13px;
 }
 
 /* Button with indicator */

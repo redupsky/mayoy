@@ -1,10 +1,10 @@
 module Mayoy.Workspace.View exposing (view)
 
 import Html exposing (div, text, textarea, header, select, option, table, thead, th, tbody, tr, td)
-import Html.Attributes exposing (id, class, disabled)
+import Html.Attributes exposing (class, disabled, id)
 import Html.Events exposing (onClick)
 import String
-import Mayoy.Model exposing (Connection(Closing), QueryResult(Rows), queryIsRunning, connectionName, extractParamsAndThreadId)
+import Mayoy.Model exposing (Connection(Closing), QueryResult(Rows), queryIsRunning, connectionShortName, extractParamsAndThreadId)
 import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, leftOrNo, rightOrNo)
 import Mayoy.Workspace.Message exposing (Message(Run, CloseConnection))
 
@@ -43,7 +43,7 @@ viewHeader { connection, result, editor } =
         name =
             case maybeConnectionAndThreadId of
                 Just ( params, _ ) ->
-                    connectionName params
+                    connectionShortName params
 
                 _ ->
                     ""
@@ -55,29 +55,12 @@ viewHeader { connection, result, editor } =
 
                 _ ->
                     0
-
-        selectConnection =
-            div [ class "header-menu-item select-connection" ]
-                [ select []
-                    [ option [] [ text name ]
-                    ]
-                ]
-
-        closeConnection =
-            div [ class "header-menu-item close" ]
-                [ buttonWithIndicator [ disabled <| closing || queryIsRunning result, onClick <| CloseConnection <| threadId ]
-                    [ text "Close"
-                    ]
-                    (rightOrNo closing)
-                ]
     in
         header [ class "header" ]
-            [ div [ class "header-menu" ]
-                [ selectConnection
-                , closeConnection
-                ]
-            , div [ class "header-buttons" ]
-                [ div [ class "header-buttons-item _run" ]
+            [ div [ class "header-menu _left" ] []
+            , div [ class "header-title" ] [ text name ]
+            , div [ class "header-menu _right" ]
+                [ div [ class "header-menu-item" ]
                     [ buttonWithIndicator [ disabled <| closing || queryIsRunning result || String.isEmpty editor.value, onClick Run ] [ text "Run" ] (leftOrNo <| queryIsRunning result)
                     ]
                 ]

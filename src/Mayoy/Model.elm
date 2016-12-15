@@ -84,6 +84,20 @@ connectionName params =
         user ++ "@" ++ host ++ ":" ++ (toString portNumber)
 
 
+connectionShortName { user, hostAndPort } =
+    let
+        host =
+            fst hostAndPort
+
+        portNumber =
+            if snd hostAndPort == defaultPort then
+                ""
+            else
+                ":" ++ (toString <| snd hostAndPort)
+    in
+        user ++ "@" ++ host ++ portNumber
+
+
 establishedToClosing connection =
     case connection of
         Established connection ->
