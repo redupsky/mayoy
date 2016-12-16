@@ -86,16 +86,22 @@ connectionName params =
 
 connectionShortName { user, hostAndPort } =
     let
-        host =
-            fst hostAndPort
+        ( host, portNumber ) =
+            hostAndPort
 
-        portNumber =
-            if snd hostAndPort == defaultPort then
+        at =
+            if user == "" then
                 ""
             else
-                ":" ++ (toString <| snd hostAndPort)
+                "@"
+
+        portOrEmptyString =
+            if portNumber == defaultPort then
+                ""
+            else
+                ":" ++ (toString portNumber)
     in
-        user ++ "@" ++ host ++ portNumber
+        user ++ at ++ host ++ portOrEmptyString
 
 
 establishedToClosing connection =
@@ -120,12 +126,14 @@ extractParamsAndThreadId connection =
 
 
 
---
+-- Defaults
 
 
+defaultHost : String
+defaultHost =
+    "localhost"
+
+
+defaultPort : Int
 defaultPort =
     3306
-
-
-localhost =
-    ConnectionParameters ( "localhost", defaultPort ) "root" "" Nothing

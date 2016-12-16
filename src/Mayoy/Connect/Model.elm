@@ -1,7 +1,7 @@
 module Mayoy.Connect.Model exposing (Model, init, Form, formToConnectionParameters, connectionParametersToForm)
 
 import String
-import Mayoy.Model exposing (Connection(NoConnection), ConnectionParameters, defaultPort)
+import Mayoy.Model exposing (Connection(NoConnection), ConnectionParameters, defaultHost, defaultPort)
 import Mayoy.App.Port exposing (getConnectionHistoryFromLocalStorage, changeTitle)
 
 
@@ -28,7 +28,15 @@ emptyForm =
 
 formToConnectionParameters { host, portNumber, user, password, database } =
     let
-        portNumberInt =
+        hostOrDefault =
+            case host of
+                "" ->
+                    defaultHost
+
+                _ ->
+                    host
+
+        portOrDefault =
             case String.toInt portNumber of
                 Ok number ->
                     number
@@ -36,7 +44,7 @@ formToConnectionParameters { host, portNumber, user, password, database } =
                 Err _ ->
                     defaultPort
     in
-        ConnectionParameters ( host, portNumberInt ) user password Nothing
+        ConnectionParameters ( hostOrDefault, portOrDefault ) user password Nothing
 
 
 connectionParametersToForm { hostAndPort, user, password, database } =

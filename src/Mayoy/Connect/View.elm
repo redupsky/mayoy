@@ -4,7 +4,7 @@ import Html exposing (div, text, form, label, input, ul, li, h1)
 import Html.Attributes exposing (class, disabled, type', name, value, placeholder)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Json.Decode
-import Mayoy.Model exposing (Connection(Connecting), localhost, defaultPort, connectionShortName)
+import Mayoy.Model exposing (Connection(Connecting), defaultHost, defaultPort, connectionShortName)
 import Mayoy.Connect.Message exposing (Message(Connect, ChangeForm, ChangeFormHost, ChangeFormPort, ChangeFormUser, ChangeFormPassword))
 import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo)
 import Mayoy.Connect.Model exposing (formToConnectionParameters, connectionParametersToForm)
@@ -50,6 +50,7 @@ viewConnect { connection, form } =
                     , class "connect-form-input _host"
                     , name "host"
                     , value form.host
+                    , placeholder defaultHost
                     , onInput ChangeFormHost
                     ]
                     []
