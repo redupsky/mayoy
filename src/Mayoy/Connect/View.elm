@@ -4,7 +4,7 @@ import Html exposing (div, text, form, label, input, ul, li, h1)
 import Html.Attributes exposing (class, disabled, type', name, value, placeholder)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Json.Decode
-import Mayoy.Model exposing (Connection(Connecting), localhost, defaultPort, connectionName)
+import Mayoy.Model exposing (Connection(Connecting), localhost, defaultPort, connectionShortName)
 import Mayoy.Connect.Message exposing (Message(Connect, ChangeForm, ChangeFormHost, ChangeFormPort, ChangeFormUser, ChangeFormPassword))
 import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo)
 import Mayoy.Connect.Model exposing (formToConnectionParameters, connectionParametersToForm)
@@ -107,7 +107,7 @@ viewHistory connections =
                 , class "connection-history-list-item"
                 ]
                 [ label [ class "connection-history-list-item-label" ] [ text ("⌘" ++ toString (n + 1)) ]
-                , text <| connectionName connection
+                , text <| connectionShortName connection
                 ]
     in
         if List.length connections > 0 then
