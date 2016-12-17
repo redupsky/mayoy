@@ -1,8 +1,8 @@
 module Mayoy.Workspace.Update exposing (update)
 
 import Mayoy.Workspace.Message exposing (..)
-import Mayoy.Model exposing (QueryResult(..), Connection(..), establishedToClosing)
-import Mayoy.App.Port exposing (close, runQuery)
+import Mayoy.Model exposing (QueryResult(..), Connection(..), connectionName, establishedToClosing)
+import Mayoy.App.Port exposing (close, runQuery, saveEditorLastValueToLocalStorage)
 import Time exposing (second)
 import String
 
@@ -11,6 +11,15 @@ runQueryIfEstablished connection query =
     case connection of
         Established ( _, threadId ) ->
             runQuery ( threadId, query )
+
+        _ ->
+            Cmd.none
+
+
+saveEditorLastValueToLocalStorageIfEstablished connection value =
+    case connection of
+        Established ( params, _ ) ->
+            saveEditorLastValueToLocalStorage ( connectionName params, value )
 
         _ ->
             Cmd.none
@@ -30,7 +39,9 @@ update msg model =
                 editor =
                     model.editor
             in
-                ( { model | editor = { editor | value = value } }, Cmd.none )
+                ( { model | editor = { editor | value = value } }
+                , saveEditorLastValueToLocalStorageIfEstablished model.connection value
+                )
 
         ReceiveValueInSelectionFromEditor value ->
             let

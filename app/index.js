@@ -45,6 +45,14 @@ app.ports.close.subscribe(threadId => {
   });
 });
 
+app.ports.saveEditorLastValueToLocalStorage.subscribe(([name, value]) => {
+  let history = JSON.parse(localStorage.getItem(editorHistoryStorageKey)) || {};
+
+  history[name] = String(value);
+
+  localStorage.setItem(editorHistoryStorageKey, JSON.stringify(history));
+});
+
 app.ports.getEditorLastValueFromLocalStorage.subscribe(name => {
   let history = JSON.parse(localStorage.getItem(editorHistoryStorageKey));
 
@@ -54,7 +62,6 @@ app.ports.getEditorLastValueFromLocalStorage.subscribe(name => {
 });
 
 app.ports.runQuery.subscribe(([threadId, sql]) => {
-
   let query = connection.query(sql);
   let start = new Date();
 

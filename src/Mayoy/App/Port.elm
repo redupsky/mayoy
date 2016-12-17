@@ -34,6 +34,9 @@ port receiveConnectionHistoryFromLocalStorage : (List ConnectionParameters -> ms
 port changeTitle : String -> Cmd msg
 
 
+port saveEditorLastValueToLocalStorage : ( String, String ) -> Cmd msg
+
+
 port getEditorLastValueFromLocalStorage : String -> Cmd msg
 
 
