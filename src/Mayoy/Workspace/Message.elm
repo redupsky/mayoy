@@ -8,6 +8,7 @@ type Message
     = ReceiveValueFromEditor String
     | ReceiveValueInSelectionFromEditor (Maybe String)
     | ReceiveValueInCurrentLineFromEditor (Maybe String)
+    | ReceiveEditorLastValue String
     | RunQuery String
     | Run
     | RunAllAsQuery

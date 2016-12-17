@@ -8,6 +8,7 @@ let connection;
 let editor;
 
 const historyStorageKey = "mayoy_connection_history";
+const editorHistoryStorageKey = "mayoy_editor_history";
 
 const codemirrorOptions = {lineNumbers: true, mode: "sql", autofocus: true, lineNumbers: false};
 
@@ -42,6 +43,14 @@ app.ports.close.subscribe(threadId => {
 
     editor.toTextArea(); // Fucking magic destroy of Codemirror
   });
+});
+
+app.ports.getEditorLastValueFromLocalStorage.subscribe(name => {
+  let history = JSON.parse(localStorage.getItem(editorHistoryStorageKey));
+
+  if (history !== null && history[name]) {
+    app.ports.receiveEditorLastValueFromLocalStorage.send(String(history[name]));
+  }
 });
 
 app.ports.runQuery.subscribe(([threadId, sql]) => {

@@ -18,6 +18,13 @@ runQueryIfEstablished connection query =
 
 update msg model =
     case msg of
+        ReceiveEditorLastValue value ->
+            let
+                editor =
+                    model.editor
+            in
+                ( { model | editor = { editor | value = value } }, Cmd.none )
+
         ReceiveValueFromEditor value ->
             let
                 editor =
