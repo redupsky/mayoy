@@ -1,6 +1,6 @@
 module Mayoy.Workspace.View exposing (view)
 
-import Html exposing (div, text, textarea, header, select, option, table, thead, th, tbody, tr, td)
+import Html exposing (div, text, textarea, header, select, option, table, thead, th, tbody, tr, td, ul, li)
 import Html.Attributes exposing (class, disabled, id)
 import Html.Events exposing (onClick)
 import String
@@ -15,16 +15,26 @@ textAreaId =
 
 view model =
     div [ class "workspace" ]
-        [ viewErrors model.errors
-        , viewHeader model
-        , viewQuery model.editor.value
-        , viewResultTable model.result
-        , viewStatus model.status
-        ]
+        ((viewErrors model.errors)
+            ++ [ viewHeader model
+               , viewQuery model.editor.value
+               , viewResultTable model.result
+               , viewStatus model.status
+               ]
+        )
 
 
 viewErrors errors =
-    div [] (List.map text errors)
+    let
+        elems =
+            case errors of
+                [] ->
+                    []
+
+                errors ->
+                    errors |> List.map (\error -> li [ class "workspace-errors-list-item" ] [ text error ])
+    in
+        [ ul [ class "workspace-errors-list" ] elems ]
 
 
 viewHeader { connection, result, editor } =
