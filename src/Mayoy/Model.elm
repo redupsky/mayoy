@@ -61,6 +61,7 @@ type alias Row =
 -- Helpers
 
 
+queryIsRunning : Maybe QueryResult -> Bool
 queryIsRunning result =
     case result of
         Just (Running _) ->
@@ -70,6 +71,7 @@ queryIsRunning result =
             False
 
 
+connectionName : ConnectionParameters -> String
 connectionName params =
     let
         user =
@@ -84,6 +86,7 @@ connectionName params =
         user ++ "@" ++ host ++ ":" ++ (toString portNumber)
 
 
+connectionShortName : ConnectionParameters -> String
 connectionShortName { user, hostAndPort } =
     let
         ( host, portNumber ) =
@@ -104,15 +107,7 @@ connectionShortName { user, hostAndPort } =
         user ++ at ++ host ++ portOrEmptyString
 
 
-establishedToClosing connection =
-    case connection of
-        Established connection ->
-            Closing connection
-
-        _ ->
-            NoConnection
-
-
+extractParamsAndThreadId : Connection -> Maybe ( ConnectionParameters, ThreadId )
 extractParamsAndThreadId connection =
     case connection of
         Established ( params, threadId ) ->
@@ -123,6 +118,16 @@ extractParamsAndThreadId connection =
 
         _ ->
             Nothing
+
+
+establishedToClosing : Connection -> Connection
+establishedToClosing connection =
+    case connection of
+        Established connection ->
+            Closing connection
+
+        _ ->
+            NoConnection
 
 
 
