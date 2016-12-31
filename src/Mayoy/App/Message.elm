@@ -1,4 +1,4 @@
-module Mayoy.App.Message exposing (..)
+module Mayoy.App.Message exposing (Message(..))
 
 import Mayoy.Connect.Message as Connect
 import Mayoy.Workspace.Message as Workspace
