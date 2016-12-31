@@ -7,6 +7,7 @@ import Mayoy.App.View exposing (view)
 import Mayoy.App.Subscriptions exposing (subscriptions)
 
 
+main : Program Never
 main =
     Html.App.program
         { view = view
