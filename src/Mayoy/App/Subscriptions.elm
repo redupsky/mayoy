@@ -9,6 +9,7 @@ import Time exposing (Time, second)
 import Mayoy.Model exposing (QueryResult(Running))
 
 
+subscriptions : Model -> Sub Message
 subscriptions model =
     Sub.batch
         [ connectionEstablished (ConnectMessage << Connect.ConnectionEstablished)
