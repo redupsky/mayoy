@@ -10,6 +10,7 @@ type Indicator
     | IndicatorOnTheRight
 
 
+rightOrNo : Bool -> Indicator
 rightOrNo param =
     if param then
         IndicatorOnTheRight
@@ -17,6 +18,7 @@ rightOrNo param =
         NoIndicator
 
 
+leftOrNo : Bool -> Indicator
 leftOrNo param =
     if param then
         IndicatorOnTheLeft
@@ -24,6 +26,7 @@ leftOrNo param =
         NoIndicator
 
 
+buttonWithIndicator : List (Html.Attribute a) -> List (Html.Html a) -> Indicator -> Html.Html a
 buttonWithIndicator attrs childs which =
     let
         indicatorType =
