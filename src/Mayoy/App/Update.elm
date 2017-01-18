@@ -12,6 +12,7 @@ import Mayoy.Workspace.Model
 import Mayoy.Model exposing (Connection(Established), connectionName)
 
 
+textAreaId : String
 textAreaId =
     "editor"
 
