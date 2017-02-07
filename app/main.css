@@ -172,12 +172,10 @@ body {
 }
 
 .header-menu._left {
-  float: left;
   margin: 0 8px 0 77px;
 }
 
 .header-menu._right {
-  float: right;
   margin: 0 8px;
 }
 
