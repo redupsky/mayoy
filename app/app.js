@@ -86,15 +86,26 @@ const menu = Menu.buildFromTemplate(
 
 function createWindow() {
 
-  win = new BrowserWindow({width: 800, height: 600, minWidth: 600, minHeight: 450, titleBarStyle: "hidden-inset"});
+  win = new BrowserWindow(
+    {
+      width: 800,
+      height: 600,
+      minWidth: 600,
+      minHeight: 450,
+      titleBarStyle: "hidden-inset",
+      show: false
+    }
+  );
 
-  Menu.setApplicationMenu(menu);
-
-  win.loadURL(`file://${__dirname}/index.html`);
+  win.once("ready-to-show", () => win.show());
 
   win.on("closed", () => {
     win = null;
   });
+
+  Menu.setApplicationMenu(menu);
+
+  win.loadURL(`file://${__dirname}/index.html`);
 }
 
 app.on("ready", createWindow);
