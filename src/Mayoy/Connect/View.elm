@@ -1,6 +1,6 @@
 module Mayoy.Connect.View exposing (view)
 
-import Html exposing (div, text, form, label, input, ul, li, h1)
+import Html exposing (div, text, form, label, input, ul, li, h1, header)
 import Html.Attributes exposing (class, disabled, type', name, value, placeholder)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Json.Decode
@@ -11,19 +11,24 @@ import Mayoy.Connect.Model exposing (formToConnectionParameters, connectionParam
 
 
 view model =
-    div [ class "connect" ]
+    div [ class "connection" ]
         [ viewErrors model.errors
+        , viewHeader
         , viewConnect model
-        , viewHistory model.history
+          --, viewHistory model.history
         ]
 
 
 viewErrors errors =
     let
         item error =
-            li [ class "connect-errors-item" ] [ text error ]
+            li [ class "connection-errors-item" ] [ text error ]
     in
-        ul [ class "connect-errors" ] (List.map item errors)
+        ul [ class "connection-errors" ] (List.map item errors)
+
+
+viewHeader =
+    header [ class "connection-header" ] [ text "Connect to..." ]
 
 
 viewConnect { connection, form } =
@@ -42,60 +47,62 @@ viewConnect { connection, form } =
         onClickWithPrevent msg =
             onWithOptions "click" { defaultEventOptions | preventDefault = True } (Json.Decode.succeed msg)
     in
-        Html.form [ class "connect-form", onSubmit <| Connect <| formToConnectionParameters form ]
-            [ div [ class "connect-form-item" ]
-                [ label [ class "connect-form-label" ] [ text "Host:" ]
-                , input
-                    [ type' "text"
-                    , class "connect-form-input _host"
-                    , name "host"
-                    , value form.host
-                    , placeholder defaultHost
-                    , onInput ChangeFormHost
+        div [ class "connection-form-container" ]
+            [ Html.form [ class "connection-form", onSubmit <| Connect <| formToConnectionParameters form ]
+                [ div [ class "connection-form-item" ]
+                    [ label [ class "connection-form-label" ] [ text "Host:" ]
+                    , input
+                        [ type' "text"
+                        , class "connection-form-input _host"
+                        , name "host"
+                        , value form.host
+                        , placeholder defaultHost
+                        , onInput ChangeFormHost
+                        ]
+                        []
                     ]
-                    []
-                ]
-            , div [ class "connect-form-item" ]
-                [ label [ class "connect-form-label" ] [ text "Port:" ]
-                , input
-                    [ type' "text"
-                    , class "connect-form-input _port"
-                    , name "port"
-                    , value form.portNumber
-                    , placeholder <| toString defaultPort
-                    , onInput ChangeFormPort
+                , div [ class "connection-form-item" ]
+                    [ label [ class "connection-form-label" ] [ text "Port:" ]
+                    , input
+                        [ type' "text"
+                        , class "connection-form-input _port"
+                        , name "port"
+                        , value form.portNumber
+                        , placeholder <| toString defaultPort
+                        , onInput ChangeFormPort
+                        ]
+                        []
                     ]
-                    []
-                ]
-            , div [ class "connect-form-item" ]
-                [ label [ class "connect-form-label" ] [ text "User:" ]
-                , input
-                    [ type' "text"
-                    , class "connect-form-input _user"
-                    , name "user"
-                    , value form.user
-                    , onInput ChangeFormUser
+                , div [ class "connection-form-item" ]
+                    [ label [ class "connection-form-label" ] [ text "User:" ]
+                    , input
+                        [ type' "text"
+                        , class "connection-form-input _user"
+                        , name "user"
+                        , value form.user
+                        , onInput ChangeFormUser
+                        ]
+                        []
                     ]
-                    []
-                ]
-            , div [ class "connect-form-item" ]
-                [ label [ class "connect-form-label" ] [ text "Password:" ]
-                , input
-                    [ type' "password"
-                    , class "connect-form-input _password"
-                    , name "password"
-                    , value form.password
-                    , onInput ChangeFormPassword
+                , div [ class "connection-form-item" ]
+                    [ label [ class "connection-form-label" ] [ text "Password:" ]
+                    , input
+                        [ type' "password"
+                        , class "connection-form-input _password"
+                        , name "password"
+                        , value form.password
+                        , onInput ChangeFormPassword
+                        ]
+                        []
                     ]
-                    []
-                ]
-            , div [ class "connect-form-item _connect" ]
-                [ buttonWithIndicator
-                    [ disabled isConnecting
-                    , onClickWithPrevent <| Connect <| formToConnectionParameters form
+                , div [ class "connection-form-item _connect" ]
+                    [ buttonWithIndicator
+                        [ disabled isConnecting
+                        , onClickWithPrevent <| Connect <| formToConnectionParameters form
+                        ]
+                        [ text "Connect" ]
+                        (rightOrNo isConnecting)
                     ]
-                    [ text "Connect" ]
-                    (rightOrNo isConnecting)
                 ]
             ]
 
@@ -107,14 +114,14 @@ viewHistory connections =
                 [ onClick <| ChangeForm <| connectionParametersToForm connection
                 , class "connection-history-list-item"
                 ]
-                [ label [ class "connection-history-list-item-label" ] [ text ("⌘" ++ toString (n + 1)) ]
-                , text <| connectionShortName connection
-                ]
+                [ text <| connectionShortName connection ]
     in
         if List.length connections > 0 then
             div [ class "connection-history" ]
-                [ h1 [ class "connection-history-header" ] [ text "History" ]
-                , ul [ class "connection-history-list" ] <| List.indexedMap item connections
+                [ div [ class "connection-history-list-container" ]
+                    [ ul [ class "connection-history-list" ] <| List.indexedMap item connections
+                    ]
+                , div [ class "connection-history-link" ] [ text "Press ⌘ for history" ]
                 ]
         else
             text ""

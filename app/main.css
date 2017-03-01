@@ -15,6 +15,40 @@ body {
   font: 13px "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+button {
+  font-size: 13px;
+  border: #d2d2d2 1px solid;
+  border-top-color: #d9d9d9;
+  border-bottom-color: #bababa;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+}
+
+button:active {
+  background-color: #f6f6f6;
+}
+
+button:focus {
+  border: #0098e2 1px solid;
+  outline: 0;
+}
+
+input {
+  font-size: 13px;
+  border: #d2d2d2 1px solid;
+  border-top-color: #d9d9d9;
+  border-bottom-color: #bababa;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+  padding: 3px 5px;
+  border-radius: 3px;
+}
+
+input:focus {
+  border: #0098e2 1px solid;
+  outline: 0;
+}
+
 .progress-indicator {
   width: 28px;
   height: 28px;
@@ -29,15 +63,7 @@ body {
   position: relative;
 }
 
-.connect {
-  height: 100%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.connect-errors {
+.connection-errors {
   position: absolute;
   top: 21px;
   margin: 0;
@@ -47,71 +73,139 @@ body {
   align-self: center;
 }
 
-.connect-form {
-  margin: 21px;
-  align-self: center;
-  width: 227px;
-  margin-top: -50px;
+.connection {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
-.connect-form-item {
-  margin-bottom: 3px;
+.connection-header {
+  text-align: center;
+  height: 37px;
+  line-height: 37px;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  background-color: #fff;
 }
 
-.connect-form-item._connect {
+.connection-form-container {
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.connection-error {
+  margin-bottom: 35px;
+  font-size: 13px;
+  height: 14px;
+  color: #333;
+  visibility: hidden;
+}
+
+.connection-form {
+  width: 230px;
+  height: 145px;
+  margin: 0;
+}
+
+.connection-form-item {
+  margin-bottom: 5px;
+}
+
+.connection-form-item:last-child {
+  margin-bottom: 0;
+}
+
+.connection-form-item._connect {
   margin-top: 11px;
   text-align: center;
 }
 
-.connect-form-label {
+.connection-form-label {
   display: inline-block;
-  width: 60px;
+  width: 65px;
   text-align: right;
   margin-right: 11px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
-.connect-form-input {
-  font-size: 13px;
-  width: 150px;
+.connection-form-input {
+  width: 138px;
 }
 
-.connect-form-item._connect button {
-  font-size: 13px;
+.connection-form-input._port {
+  width: 45px;
 }
 
 .connection-history {
-  align-self: center;
-  border-top: #ddd 1px solid;
-  margin-top: 21px;
+  font-size: 13px;
+  color: #333;
+  height: 37px;
+  line-height: 37px;
+  text-align: center;
 }
 
-.connection-history-header {
-  font-weight: normal;
-  font-size: 12px;
-  text-align: center;
-  display: inline-block;
-  margin-bottom: 0px;
-  padding: 0 7px;
-  background-color: #ffffff;
-  position: relative;
-  top: -17px;
-  left: 91.5px;
+.connection-history-link {
+  display: inline;
+}
+
+.connection-history-list-container {
+  display: none;
+}
+
+.connection-history-list-container {
+  position: absolute;
+  left: 50%;
+  margin-left: -150px;
+  bottom: 50px;
+  width: 300px;
 }
 
 .connection-history-list {
-  margin: 0;
-  padding: 0;
+  background-color: #fff;
+  border-radius: 7px;
+  border: #d2d2d2 1px solid;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   list-style-type: none;
-  max-height: 100px;
-  overflow-y: hidden;
-  overflow-x: scroll;
-  width: 227px;
+  margin: 0;
+  padding: 7px 0;
+  font-size: 14px;
+  text-align: left;
+  display: inline-block;
+}
+
+.connection-history-list:before {
+  width: 15px;
+  height: 15px;
+  background-color: #fff;
+  content: "";
+  position: absolute;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  top: 100%;
+  left: 50%;
+  z-index: 0;
+  border-bottom: #eee 1px solid;
+  border-right: #eee 1px solid;
+  margin-top: -1px;
 }
 
 .connection-history-list-item {
+  line-height: 28px;
+  padding: 0 21px;
+}
+
+.connection-history-list-item:hover {
+  background-color: #f6f6f6;
   cursor: pointer;
 }
+
+
+
 
 .connection-history-list-item-label {
   width: 60px;
