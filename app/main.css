@@ -152,13 +152,11 @@ input:focus {
 
 .connection-history-link {
   display: inline;
+  cursor: pointer;
 }
 
 .connection-history-list-container {
   display: none;
-}
-
-.connection-history-list-container {
   position: absolute;
   left: 50%;
   margin-left: -150px;
@@ -166,11 +164,17 @@ input:focus {
   width: 300px;
 }
 
+.connection-history-list-container._show {
+  display: block;
+}
+
 .connection-history-list {
   background-color: #fff;
   border-radius: 7px;
   border: #d2d2d2 1px solid;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  border-top-color: #d9d9d9;
+  border-bottom-color: #bababa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   list-style-type: none;
   margin: 0;
   padding: 7px 0;
@@ -180,8 +184,8 @@ input:focus {
 }
 
 .connection-history-list:before {
-  width: 15px;
-  height: 15px;
+  width: 10px;
+  height: 10px;
   background-color: #fff;
   content: "";
   position: absolute;
@@ -189,9 +193,8 @@ input:focus {
   top: 100%;
   left: 50%;
   z-index: 0;
-  border-bottom: #eee 1px solid;
-  border-right: #eee 1px solid;
-  margin-top: -1px;
+  border-bottom: #bababa 1px solid;
+  border-right: #bababa 1px solid;
 }
 
 .connection-history-list-item {

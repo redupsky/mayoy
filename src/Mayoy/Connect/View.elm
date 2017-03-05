@@ -5,17 +5,33 @@ import Html.Attributes exposing (class, disabled, type', name, value, placeholde
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Json.Decode
 import Mayoy.Model exposing (Connection(Connecting), defaultHost, defaultPort, connectionShortName)
-import Mayoy.Connect.Message exposing (Message(Connect, ChangeForm, ChangeFormHost, ChangeFormPort, ChangeFormUser, ChangeFormPassword))
+import Mayoy.Connect.Message exposing (Message(Connect, ChangeForm, ChangeFormHost, ChangeFormPort, ChangeFormUser, ChangeFormPassword, ToggleHistory, HideHistory))
 import Mayoy.Component.ButtonWithIndicator exposing (buttonWithIndicator, rightOrNo)
 import Mayoy.Connect.Model exposing (formToConnectionParameters, connectionParametersToForm)
 
 
+onClickWithPreventDefault msg =
+    let
+        defaultEventOptions =
+            Html.Events.defaultOptions
+    in
+        onWithOptions "click" { defaultEventOptions | preventDefault = True } (Json.Decode.succeed msg)
+
+
+onClickWithoutPropagation msg =
+    let
+        defaultEventOptions =
+            Html.Events.defaultOptions
+    in
+        onWithOptions "click" { defaultEventOptions | stopPropagation = True } (Json.Decode.succeed msg)
+
+
 view model =
-    div [ class "connection" ]
+    div [ class "connection", onClick HideHistory ]
         [ viewErrors model.errors
         , viewHeader
         , viewConnect model
-          --, viewHistory model.history
+        , viewHistory model.history model.showHistory
         ]
 
 
@@ -40,12 +56,6 @@ viewConnect { connection, form } =
 
                 _ ->
                     False
-
-        defaultEventOptions =
-            Html.Events.defaultOptions
-
-        onClickWithPrevent msg =
-            onWithOptions "click" { defaultEventOptions | preventDefault = True } (Json.Decode.succeed msg)
     in
         div [ class "connection-form-container" ]
             [ Html.form [ class "connection-form", onSubmit <| Connect <| formToConnectionParameters form ]
@@ -98,7 +108,7 @@ viewConnect { connection, form } =
                 , div [ class "connection-form-item _connect" ]
                     [ buttonWithIndicator
                         [ disabled isConnecting
-                        , onClickWithPrevent <| Connect <| formToConnectionParameters form
+                        , onClickWithPreventDefault <| Connect <| formToConnectionParameters form
                         ]
                         [ text "Connect" ]
                         (rightOrNo isConnecting)
@@ -107,7 +117,7 @@ viewConnect { connection, form } =
             ]
 
 
-viewHistory connections =
+viewHistory connections show =
     let
         item n connection =
             li
@@ -115,13 +125,21 @@ viewHistory connections =
                 , class "connection-history-list-item"
                 ]
                 [ text <| connectionShortName connection ]
+
+        showHistory =
+            case show of
+                True ->
+                    " _show"
+
+                False ->
+                    ""
     in
         if List.length connections > 0 then
             div [ class "connection-history" ]
-                [ div [ class "connection-history-list-container" ]
+                [ div [ class ("connection-history-list-container" ++ showHistory) ]
                     [ ul [ class "connection-history-list" ] <| List.indexedMap item connections
                     ]
-                , div [ class "connection-history-link" ] [ text "Press ⌘ for history" ]
+                , div [ class "connection-history-link", onClickWithoutPropagation ToggleHistory ] [ text "Click to view history" ]
                 ]
         else
             text ""

@@ -21,7 +21,7 @@ update msg model =
                 ( { model | errors = [ error ], connection = Failed ( error, 0 ) }, Cmd.none )
 
             ChangeForm newForm ->
-                ( { model | form = newForm }, Cmd.none )
+                ( { model | form = newForm, showHistory = False }, Cmd.none )
 
             ChangeFormHost host ->
                 ( { model | form = { form | host = host } }, Cmd.none )
@@ -37,3 +37,9 @@ update msg model =
 
             ReceiveConnectionHistory connections ->
                 ( { model | history = connections }, Cmd.none )
+
+            ToggleHistory ->
+                ( { model | showHistory = not model.showHistory }, Cmd.none )
+
+            HideHistory ->
+                ( { model | showHistory = False }, Cmd.none )

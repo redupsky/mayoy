@@ -10,6 +10,7 @@ type alias Model =
     , connection : Connection
     , form : Form
     , history : List ConnectionParameters
+    , showHistory : Bool
     }
 
 
@@ -67,7 +68,7 @@ connectionParametersToForm { hostAndPort, user, password, database } =
 
 
 init =
-    ( Model [] NoConnection emptyForm []
+    ( Model [] NoConnection emptyForm [] False
     , Cmd.batch
         [ changeTitle "Connect to..."
         , getConnectionHistoryFromLocalStorage ()

@@ -14,3 +14,5 @@ type Message
     | ChangeFormUser String
     | ChangeFormPassword String
     | ReceiveConnectionHistory (List ConnectionParameters)
+    | ToggleHistory
+    | HideHistory
