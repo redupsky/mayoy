@@ -16,4 +16,4 @@ run:
 	$(ELECTRON) $(APPDIR)/app.js $(APPDIR)
 
 build:
-	$(PACKAGER) ./ --out $(BUILDDIR) --overwrite
+	$(PACKAGER) ./ --out $(BUILDDIR) --overwrite --icon icon.icns
